@@ -55,7 +55,7 @@ while ($prop = $propsList->GetNext()) {
         }
         else {
             $property_enum = CIBlockElement::GetList(Array('DEF'=>'DESC', 'SORT'=>'ASC'),
-                Array('IBLOCK_ID'=>$prop['LINK_IBLOCK_ID']));
+                Array('IBLOCK_ID'=>$prop['LINK_IBLOCK_ID'], 'PROPERTY_KEY' => getKey()));
             while ($enum_fields = $property_enum->GetNext()) {
                 $arResult['PROPS'][$i]['VALUES'][$enum_fields['ID']] = $enum_fields['NAME'];
             }
