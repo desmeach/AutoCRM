@@ -1,0 +1,6 @@
+<?
+$sSectionName = "Канбан";
+$arDirProperties = Array(
+
+);
+?>

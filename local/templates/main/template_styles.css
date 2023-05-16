@@ -1,0 +1,47 @@
+html {-webkit-text-size-adjust:none; min-height:100%; overflow-x: hidden;}
+body {padding: 0; margin:0; font-family: "Roboto Light", sans-serif; min-height:100%;}
+.main-layout {
+    min-height: 100vh;
+}
+
+#kanban {
+    min-height: 100vh;
+}
+
+#header {
+    background: -webkit-linear-gradient(45deg, #2BFFF7, #6DAFFF);
+    background: linear-gradient(45deg, #2BFFF7, #6DAFFF);
+}
+
+/*#logo {*/
+/*    -webkit-filter: drop-shadow(1px 1px 0 black)*/
+/*    drop-shadow(1px 1px 0 black);*/
+/*}*/
+
+/*#avatar {*/
+/*    box-shadow: 1px 1px 5px 1px black;*/
+/*}*/
+
+/*#timer-block {*/
+/*    -webkit-filter: drop-shadow(0px 0px 0 black)*/
+/*    drop-shadow(1px 1px 0 black);*/
+/*}*/
+
+tr {
+    font-size: 14px;
+}
+
+.card-body > a, .order-products > a, .card-body > span {
+    font-size: 13px;
+}
+
+.card-body > h6 {
+    font-size: 14px;
+}
+.card-body > h5 {
+    font-size: 16px;
+}
+
+.card:hover {
+    background-color: lightblue;
+}

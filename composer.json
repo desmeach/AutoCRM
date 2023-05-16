@@ -1,0 +1,16 @@
+{
+    "require": {
+        "aspose-cloud/aspose-words-cloud": "^23.3",
+        "phpoffice/phpword": "^1.0",
+        "dompdf/dompdf": "^2.0",
+        "mpdf/mpdf": "^8.1",
+      "ext-json": "*",
+        "calcinai/php-imagick": "^0.1.2",
+        "tecnickcom/tcpdf": "^6.6",
+      "ext-memcache": "*",
+        "phpoffice/phpspreadsheet": "^1.28",
+      "ext-memcached": "*",
+        "dadata/apiclient": "^2.0",
+        "zircote/swagger-php": "^4.7"
+    }
+}
