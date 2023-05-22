@@ -1,6 +1,0 @@
-<?
-$sSectionName = "Аналитика";
-$arDirProperties = Array(
-
-);
-?>

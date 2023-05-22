@@ -9,16 +9,12 @@ require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/main/include/prolog_before.
 
 use lib\ReportsGenerator;
 
-// путь к файлам с превью
 function coverImagePath(string $pdfFileName) {
     $poster = pathinfo($pdfFileName, PATHINFO_FILENAME);
     return $_SERVER['DOCUMENT_ROOT'] . "/include/docs/$poster.png";
 }
 
-
-// здесь создаем превью
-// параметр файла - пусть к PDF-файлу
-function createPoster(string $pdfFile) {
+function createDocument(string $pdfFile) {
     $firstPage = '[0]'; // первая страница
     $im = new Imagick($pdfFile . $firstPage); // читаем первую страницу из файла
     $im->setImageFormat('png'); // устанавливаем формат jpg
@@ -28,5 +24,5 @@ function createPoster(string $pdfFile) {
 }
 
 $filename = ReportsGenerator::getOrderReport($_POST['ID']);
-createPoster($_SERVER['DOCUMENT_ROOT'] . "/include/docs/$filename");
+createDocument($_SERVER['DOCUMENT_ROOT'] . "/include/docs/$filename");
 echo $filename;

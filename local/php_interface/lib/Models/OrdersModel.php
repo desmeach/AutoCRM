@@ -178,7 +178,10 @@ class OrdersModel extends Model {
         $ID = $el->Add($arFields);
         return $ID ?? ['error' => 'Ошибка при создании элемента'];
     }
-    public static function update($props) {
-
+    public static function update(): bool|string {
+        return self::updateElem(self::$IBLOCK_ID);
+    }
+    public static function delete($ID): array {
+        return self::deleteElem($ID);
     }
 }

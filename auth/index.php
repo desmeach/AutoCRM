@@ -1,9 +1,9 @@
 <?php require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");
 global $APPLICATION;
-$APPLICATION->SetTitle(""); ?>
+$APPLICATION->SetTitle("Авторизация"); ?>
 
 <?php $APPLICATION->IncludeComponent(
-	"bitrix:system.auth.form", 
+	"bitrix:system.auth.form",
 	"auth_crm",
 	array(
 		"COMPONENT_TEMPLATE" => "auth_crm",

@@ -71,7 +71,13 @@ class ManagersModel extends Model {
         $ID = $USER->Add($PROPS);
         return $ID ?? ['error' => 'Ошибка при создании элемента'];
     }
-    public static function update($props) {
-
+    public static function update($props): bool {
+        return false;
+    }
+    public static function delete($ID): array {
+        if(!CUser::Delete($_POST['ID'])) {
+            return ['success' => '', 'error' => 'Не удалось удалить элемент!'];
+        }
+        return ['success' => 'Элемент удален', 'error' => ''];
     }
 }

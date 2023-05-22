@@ -8,6 +8,7 @@
 namespace lib\Controllers;
 
 use lib\Models\CarsModel;
+use lib\Models\ClientsModel;
 
 class CarsController extends Controller {
     public static function getList(): array {
@@ -21,5 +22,12 @@ class CarsController extends Controller {
         if (!isset($_POST))
             return 'Ошибка запроса';
         return CarsModel::add($_POST);
+    }
+    public static function delete($ID): void {
+        CarsModel::delete($ID);
+    }
+    public static function update() {
+        header('Content-Type: json/application');
+        return CarsModel::update();
     }
 }

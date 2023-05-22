@@ -27,4 +27,14 @@ class ClientsController extends Controller {
             return 'Ошибка запроса';
         return ClientsModel::add($_POST);
     }
+    public static function delete($ID) {
+        ClientsModel::delete($ID);
+    }
+    public static function update() {
+        header('Content-Type: json/application');
+        return ClientsModel::update();
+    }
+    public static function getByPhone($phone) {
+        return ClientsModel::getItemByPhoneNumber($phone);
+    }
 }

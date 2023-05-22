@@ -121,22 +121,45 @@ $entity = $arResult['ENTITY'];
                     <label for="<?=$prop['CODE']?>">
                         <?=$prop['NAME']?>
                     </label>
-                    <?php if (isset($elem) && $prop['MULTIPLE'] == 'Y'):?>
-                        <?php foreach ($elem[$prop['CODE']]['VALUE'] as $key => $element):?>
-                        <select class="form-select <?=$key > 0 ? 'mt-3' : ''?>"
-                                id="<?=$key == 0 ? $prop['CODE'] : '' ?>"
-                                name="<?=$prop['CODE']?>[]">
-                            <?php foreach ($prop['VALUES'] as $id => $value): ?>
-                                <option <?php
-                                if ($id == $element['ID'])
-                                    echo 'selected';
-                                ?>
-                                    value="<?=$id?>"><?=$value?></option>
-                            <?php endforeach;?>
-                        </select>
-                        <?php endforeach; ?>
+                    <?php if ($prop['MULTIPLE'] == 'Y'):?>
+                        <?php if (isset($elem)):?>
+                            <?php foreach ($elem[$prop['CODE']]['VALUE'] as $key => $element):?>
+                            <select class="form-select <?=$key > 0 ? 'mt-3' : ''?>"
+                                    id="<?=$key == 0 ? $prop['CODE'] : '' ?>"
+                                    name="<?=$prop['CODE']?>[]">
+                                <?php foreach ($prop['VALUES'] as $id => $value): ?>
+                                    <option <?php
+                                    if ($id == $element['ID'])
+                                        echo 'selected';
+                                    ?>
+                                        value="<?=$id?>"><?=$value?></option>
+                                <?php endforeach;?>
+                            </select>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <select class="form-select"
+                                    id="<?=$prop['CODE']?>"
+                                    name="<?=$prop['CODE']?>">
+                                <?php foreach ($prop['VALUES'] as $id => $value):?>
+                                    <option
+                                        <?php
+                                        if (is_array($elem[$prop['CODE']]['VALUE']))
+                                            $elValue = $elem[$prop['CODE']]['VALUE']['NAME'];
+                                        else
+                                            $elValue = $elem[$prop['CODE']]['VALUE'];
+                                        if ($value == $elValue)
+                                            echo 'selected';
+                                        ?>
+                                        value="<?=$id?>">
+                                        <?=$value?>
+                                    </option>
+                                <?php endforeach;?>
+                            </select>
+                        <?php endif;?>
                     <?php else: ?>
-                    <select class="form-select" id="<?=$prop['CODE']?>" name="<?=$prop['CODE']?>">
+                    <select class="form-select"
+                            id="<?=$prop['CODE']?>"
+                            name="<?=$prop['CODE']?>">
                         <?php foreach ($prop['VALUES'] as $id => $value):?>
                             <option
                                 <?php
@@ -155,12 +178,11 @@ $entity = $arResult['ENTITY'];
                     <?php endif; ?>
                 </div>
                 <?php if ($prop['MULTIPLE'] == 'Y'): ?>
-                <div class="my-1">
-                    <a style='cursor: pointer; text-decoration: none; color: black;'
-                       class='add-button' data-code="<?=$prop['CODE']?>">
-                        <img class='mb-3' src='/include/actions_icons/add.png' alt='Add'>
-                    </a>
-                </div>
+                    <div class="my-1">
+                        <a style='cursor: pointer; text-decoration: none; color: black;' class='add-button' data-code="<?=$prop['CODE']?>">
+                            <img class='mb-3' src='/include/actions_icons/add.png' alt='Add'>
+                        </a>
+                    </div>
                 <?php endif;?>
         <?php endif; ?>
         <?php endforeach; ?>

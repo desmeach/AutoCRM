@@ -19,6 +19,7 @@ abstract class Model {
     abstract static function getList($filter);
     abstract static function getItemByID($ID): ?array;
     abstract static function add($data);
+    abstract static function delete($ID);
     protected static function getItemByIDFromIBlockID($IBLOCK_ID, $ID): array|\_CIBElement|null {
         try {
             $itemsList = CIBlockElement::GetList(false, [
@@ -99,5 +100,31 @@ abstract class Model {
             'PROPERTY_VALUES' => $props
         ];
         return $el->Add($arFields);
+    }
+    protected static function deleteElem($ID): array {
+        if(!CIBlockElement::Delete($ID)) {
+            return ['success' => '', 'error' => 'Не удалось удалить элемент!'];
+        }
+        return ['success' => 'Элемент удален', 'error' => ''];
+    }
+    protected static function updateElem($IBLOCK_ID) {
+        global $USER;
+        $NAME = $_POST['NAME'];
+        $ID = $_POST['ID'];
+        unset($_POST['IBLOCK_ID'], $_POST['ID']);
+        $PROPS = self::formatFormRequest($_POST);
+
+        $el = new CIBlockElement;
+
+        $arFields = [
+            'MODIFIED_BY' => $USER->GetID(),
+            'NAME' => $NAME,
+            'PROPERTY_VALUES' => $PROPS
+        ];
+
+        if ($ID = $el->Update($ID, $arFields, false, false))
+            return json_encode(['success' => $ID]);
+        else
+            return json_encode(['error' => $el->LAST_ERROR]);
     }
 }

@@ -27,4 +27,7 @@ class ManagersController extends Controller {
             return 'Ошибка запроса';
         return ManagersModel::add($_POST);
     }
+    public static function delete($ID): array {
+        return ManagersModel::delete($ID);
+    }
 }

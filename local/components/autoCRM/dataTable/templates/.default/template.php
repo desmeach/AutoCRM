@@ -12,7 +12,7 @@ const HANDLER_NAME = 'ControllerHandler.php';
 
 use lib\Controllers\BranchesController;
 ?>
-<script src='/local/scripts/date_picker.js'></script>
+<script src='/local/scripts/date_picker.min.js'></script>
 <script>
     let table, removeConfirmation, removeElemID, entity;
     async function setTableData() {
@@ -38,19 +38,19 @@ use lib\Controllers\BranchesController;
             },
         }).done(function(response) {
             response.forEach(e => {
-                let linkID = e.id.split('>')[1].split('<')[0].trim()
+                 let linkID = e.id.split('>')[1].split('<')[0].trim()
                 e.actions =
                     <?php if ($arResult['ENTITY'] != 'managers'):?>
-                    `<a style='cursor: pointer' class='remove-button' data-elem-id=${linkID}, data-entity=<?=$arResult['ENTITY']?>><img class='mx-4' src='/include/actions_icons/remove.png' alt='Remove'></a>` +
-                    `<a style='cursor: pointer' class='edit-button' href='edit/index.php?ID=${linkID}'><img src='/include/actions_icons/edit.png' alt='Remove'></a>`
+                    `<a style='cursor: pointer' class='remove-button' data-elem-id=${linkID}, data-entity=<?=$arResult['ENTITY']?>><img width="15" height="15" class='mx-4' src='/include/actions_icons/remove.png' alt='Remove'></a>` +
+                    `<a style='cursor: pointer' class='edit-button' href='edit/index.php?ID=${linkID}'><img width="20" height="20" src='/include/actions_icons/edit.png' alt='Remove'></a>`
                     <?php else:?>
-                    `<a style='cursor: pointer' class='remove-button' data-elem-id=${linkID}, data-entity=<?=$arResult['ENTITY']?>><img class='mx-4' src='/include/actions_icons/remove.png' alt='Remove'></a>`
+                    `<a style='cursor: pointer' class='remove-button' data-elem-id=${linkID}, data-entity=<?=$arResult['ENTITY']?>><img width="15" height="15" class='mx-4' src='/include/actions_icons/remove.png' alt='Remove'></a>`
                     <?php endif;?>
                 table.row.add(e).draw();
             })
             $('.remove-button').on('click', function() {
                 removeElemID =  $(this).data('elem-id')
-                entity =  $(this).data('entity')
+                entity = $(this).data('entity')
                 removeConfirmation.dialog('open')
             });
         });
@@ -58,10 +58,10 @@ use lib\Controllers\BranchesController;
     function removeElement() {
         $.ajax({
             type: 'POST',
-            url: '/local/scripts/remove.php',
+            url: '/local/php_interface/lib/Controllers/ControllerHandler.php',
             cache: false,
             data: {
-                'remove': 'yes',
+                'ACTION': 'delete',
                 'ID': removeElemID,
                 'ENTITY': entity,
             }
@@ -101,8 +101,8 @@ use lib\Controllers\BranchesController;
                 {
                     text: 'Да',
                     click: function() {
-                        $(this).dialog('close');
                         removeElement()
+                        $(this).dialog('close');
                     }
                 },
                 {
@@ -157,7 +157,7 @@ use lib\Controllers\BranchesController;
     </div>
 </form>
 <a style='cursor: pointer; text-decoration: none; color: black;' class='add-button' href="add/">
-    <img class='mb-3 mx-2' src='/include/actions_icons/add.png' alt='Add'>
+    <img width="26" height="27" class='mb-3 mx-2' src='/include/actions_icons/add.png' alt='Add'>
 </a>
 <table id='data-table' class='table table-hover'>
     <thead class='bg-light'>

@@ -6,7 +6,8 @@
  */
 
 Bitrix\Main\Loader::registerAutoLoadClasses(null, [
-    'lib\Statistics\OrdersStatistic' => '/local/php_interface/lib/Statistics/OrdersStatistic.php',
+    'lib\Statistics\ClientsStatistic' => '/local/php_interface/lib/Statistics/ClientsStatistic.php',
+    'lib\Statistics\ProductsStatistic' => '/local/php_interface/lib/Statistics/ProductsStatistic.php',
     'lib\ReportsGenerator' => '/local/php_interface/lib/ReportsGenerator.php',
 
     'lib\Models\Model' => '/local/php_interface/lib/Models/Model.php',

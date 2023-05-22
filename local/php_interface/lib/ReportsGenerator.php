@@ -8,6 +8,7 @@
 namespace lib;
 
 use lib\Controllers\OrdersController;
+use PhpOffice\PhpSpreadsheet\Reader\Html;
 use PhpOffice\PhpWord\Exception\CopyFileException;
 use PhpOffice\PhpWord\Exception\CreateTemporaryFileException;
 use PhpOffice\PhpWord\Exception\Exception;
@@ -61,5 +62,45 @@ class ReportsGenerator {
         $pdfFile = "order_document_$orderID.pdf";
         $xmlWriter->save($_SERVER['DOCUMENT_ROOT'] . "/include/docs/$pdfFile");
         return $pdfFile;
+    }
+
+    public static function getAnalyticReport($data, $entity) {
+        $headers = json_decode($data['headers'], true);
+        $tableBody = $data['table-body'];
+        $tableHead = '<thead><tr>';
+        foreach ($headers as $header) {
+            $tableHead .= '<th scope="col">' . $header . '</th>';
+        }
+        $tableHead .= '</tr></thead>';
+        $table = '<table>' . $tableHead . $tableBody . '</table>';
+
+        $reader = new Html();
+        $spreadsheet = $reader->loadFromString($table);
+        $columns = [
+            1 => 'A',
+            2 => 'B',
+            3 => 'C',
+            4 => 'D',
+            5 => 'E',
+            6 => 'F',
+            7 => 'G',
+            8 => 'H'
+        ];
+        $curCol = 1;
+        $activeWorksheet = $spreadsheet->setActiveSheetIndex(0);
+        foreach ($headers as $ignored) {
+            $activeWorksheet->getColumnDimension($columns[$curCol])->setAutoSize(true);
+            $curCol++;
+        }
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+
+        $entityName = match($entity) {
+            'clients' => 'клиентам',
+            'orders' => 'заказам',
+            'products' => 'услугам',
+        };
+        $filename = "Статистика по $entityName " . date('d.m.Y') . '.xlsx';
+        $writer->save($_SERVER['DOCUMENT_ROOT'] . "/include/docs/$filename");
+        return $filename;
     }
 }

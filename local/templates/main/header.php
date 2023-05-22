@@ -6,7 +6,7 @@ $unAuthPages = '/\/auth\/.*/';
 $showMenu = !preg_match($unAuthPages, $_SERVER['REQUEST_URI']);
 if (!$USER->IsAuthorized() && $showMenu) {
     LocalRedirect('/auth');
-};
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -25,6 +25,7 @@ if (!$USER->IsAuthorized() && $showMenu) {
     <?php Asset::getInstance()->addCss('https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css'); ?>
     <?php Asset::getInstance()->addCss('https://cdn.datatables.net/v/bs5/dt-1.13.3/fh-3.3.1/datatables.min.css'); ?>
     <?php Asset::getInstance()->addCss('https://ajax.aspnetcdn.com/ajax/jquery.ui/1.10.3/themes/base/jquery-ui.css'); ?>
+    <?php Asset::getInstance()->addCss('https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/css/bootstrap-select.min.css'); ?>
     <?php Asset::getInstance()->addCss(SITE_TEMPLATE_PATH . '/template_styles.css'); ?>
     <?php Asset::getInstance()->addJs('https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js') ?>
     <?php Asset::getInstance()->addJs('https://ajax.aspnetcdn.com/ajax/jquery.ui/1.10.3/jquery-ui.min.js') ?>
@@ -32,28 +33,20 @@ if (!$USER->IsAuthorized() && $showMenu) {
     <?php Asset::getInstance()->addJs('https://cdn.datatables.net/v/bs5/dt-1.13.3/fh-3.3.1/datatables.min.js') ?>
     <?php Asset::getInstance()->addJs('https://cdn.jsdelivr.net/momentjs/latest/moment.min.js') ?>
     <?php Asset::getInstance()->addJs('https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js') ?>
-	<?php $APPLICATION->ShowCSS();?>
-	<?php $APPLICATION->ShowHeadStrings();?>
-	<?php $APPLICATION->ShowHeadScripts();?>
-    <script>
-        $(document).ready(function () {
-            function timer() {
-                $('#timer').html(moment().format('HH:mm'));
-            }
-            timer()
-            setInterval(timer, 1000)
-        });
-    </script>
+    <?php Asset::getInstance()->addJs('/local/scripts/header_time.min.js') ?>
+    <?php Asset::getInstance()->addJs('https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js') ?>
+    <?php $APPLICATION->ShowCSS();?>
+    <?php $APPLICATION->ShowHeadStrings();?>
+    <?php $APPLICATION->ShowHeadScripts();?>
 <title><?php $APPLICATION->ShowTitle()?></title>
 </head>
     <div id="panel"><?php $APPLICATION->ShowPanel();?></div>
     <div id="header">
         <div class="row align-items-center">
-            <div class="col-1 my-2" style="margin-left: 1%">
-                <a href="/orders"><img id="logo" src="/include/logos/logo.png" alt="Logo" width="150"></a>
+            <div class="col-1 my-3" style="margin-left: 1%">
+                <a href="/orders"><img id="logo" src="/include/logos/logo.png" alt="Logo" width="150" height="41"></a>
             </div>
             <div class="col my-2 text-center" id="timer-block">
-                    <!--                <h2>CRM для автосервиса</h2>-->
                     <h2 class="my-2" id="timer-head">Время: <span id="timer"></span></h2>
             </div>
             <div class="col-1">

@@ -27,4 +27,11 @@ class ProductsController extends Controller {
             return 'Ошибка запроса';
         return ProductsModel::add($_POST);
     }
+    public static function delete($ID): array {
+        return ProductsModel::delete($ID);
+    }
+    public static function update() {
+        header('Content-Type: json/application');
+        return ProductsModel::update();
+    }
 }

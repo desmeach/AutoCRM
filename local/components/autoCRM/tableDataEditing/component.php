@@ -47,10 +47,10 @@ while ($prop = $propsList->GetNext()) {
         }
     }
     elseif ($prop['PROPERTY_TYPE'] == 'E') {
-        if ($prop['CODE'] == 'MANAGER') {;
+        if ($prop['CODE'] == 'MANAGER') {
             $elements = ManagersController::getList();
             foreach ($elements as $element) {
-                $arResult['PROPS'][$i]['VALUES'][$element['ID']] = $element['NAME'];
+                $arResult['PROPS'][$i]['VALUES'][$element['ID']] = $element['LAST_NAME'] . " " . $element['NAME'];
             }
         }
         else {

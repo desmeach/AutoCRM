@@ -6,7 +6,7 @@ $APPLICATION->SetTitle("Канбан");
 const HANDLER_PATH = '/local/php_interface/lib/Controllers/';
 const HANDLER_NAME = 'ControllerHandler.php';
 ?>
-    <script src="/local/scripts/date_picker.js"></script>
+    <script src="/local/scripts/date_picker.min.js"></script>
     <script>
         async function setData() {
             let startDate = $('#date-range').val().split('-')[0]

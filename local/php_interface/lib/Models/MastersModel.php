@@ -64,4 +64,10 @@ class MastersModel extends Model {
         $ID = parent::addItem($data, self::$IBLOCK_ID);
         return $ID ?? ['error' => 'Ошибка при создании элемента'];
     }
+    public static function delete($ID): array {
+        return self::deleteElem($ID);
+    }
+    public static function update(): bool|string {
+        return self::updateElem(self::$IBLOCK_ID);
+    }
 }
