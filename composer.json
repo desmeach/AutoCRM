@@ -9,8 +9,6 @@
         "tecnickcom/tcpdf": "^6.6",
       "ext-memcache": "*",
         "phpoffice/phpspreadsheet": "^1.28",
-      "ext-memcached": "*",
-        "dadata/apiclient": "^2.0",
-        "zircote/swagger-php": "^4.7"
+      "ext-memcached": "*"
     }
 }

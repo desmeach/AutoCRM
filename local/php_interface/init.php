@@ -28,6 +28,12 @@ function getKey() {
     return $arUser['UF_KEY'];
 }
 
+AddEventHandler("main", "OnBeforeUserRegister", "OnBeforeUserRegisterHandler");
+function OnBeforeUserRegisterHandler(&$arFields)
+{
+    $arFields['PERSONAL_BIRTHDAY'] = FormatDate('d.m.Y H:i:s', MakeTimeStamp($arFields['PERSONAL_BIRTHDAY']));
+}
+
 AddEventHandler("main", "OnAfterUserAdd", "OnAfterUserAddHandler");
 function OnAfterUserAddHandler(&$arFields)
 {
@@ -35,4 +41,38 @@ function OnAfterUserAddHandler(&$arFields)
         \lib\Controllers\BranchesController::add(['NAME' => $arFields['UF_CARSERVICE'],
             'KEY' => $arFields['UF_KEY']]);
     }
+}
+
+AddEventHandler("iblock", "OnBeforeIBlockElementUpdate", "calculateTotalSum");
+AddEventHandler("iblock", "OnBeforeIBlockElementAdd", "calculateTotalSum");
+AddEventHandler("iblock", "OnBeforeIBlockElementSetPropertyValuesEx", "calculateTotalSumEx");
+function calculateTotalSumEx(int $ELEMENT_ID, int $IBLOCK_ID, array &$PROPERTY_VALUES, array $FLAGS) {
+    if ($IBLOCK_ID != 3)
+        return;
+    $products = CIBlockElement::GetList(false, ['IBLOCK_ID' => 4, 'ID' => $PROPERTY_VALUES['PRODUCTS']],
+        false, false, ['PROPERTY_PRICE']);
+    $totalSum = 0;
+    $orderPrices = [];
+    while ($product = $products->GetNext()) {
+        $orderPrices[] = $product['PROPERTY_PRICE_VALUE'];
+    }
+    foreach ($orderPrices as $price) {
+        $totalSum += $price;
+    }
+    $PROPERTY_VALUES['TOTAL_PRICE'] = $totalSum;
+}
+function calculateTotalSum(&$arFields) {
+    if ($arFields['IBLOCK_ID'] != 3)
+        return;
+    $products = CIBlockElement::GetList(false, ['IBLOCK_ID' => 4, 'ID' => $arFields['PROPERTY_VALUES']['PRODUCTS']],
+        false, false, ['PROPERTY_PRICE']);
+    $totalSum = 0;
+    $orderPrices = [];
+    while ($product = $products->GetNext()) {
+        $orderPrices[] = $product['PROPERTY_PRICE_VALUE'];
+    }
+    foreach ($orderPrices as $price) {
+        $totalSum += $price;
+    }
+    $arFields['PROPERTY_VALUES']['TOTAL_PRICE'] = $totalSum;
 }

@@ -22,7 +22,9 @@ class ClientsController extends Controller {
     public static function getByID($request): ?array {
         return ClientsModel::getItemByID($request);
     }
-    public static function add() {
+    public static function add($params = []) {
+        if (!empty($params))
+            return ClientsModel::add($params);
         if (!isset($_POST))
             return 'Ошибка запроса';
         return ClientsModel::add($_POST);

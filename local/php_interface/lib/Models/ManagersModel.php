@@ -15,7 +15,7 @@ use Exception;
 require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
 CModule::IncludeModule('iblock');
 class ManagersModel extends Model {
-    private static int $groupID = 5;
+    private static array $groupID = [5, 6];
     public static function getList($filter): ?array {
         try {
             $filter['GROUPS_ID'] = self::$groupID;

@@ -51,6 +51,7 @@ $entity = $arResult['ENTITY'];
                     alert.addClass('alert-success')
                     alert.html('Операция прошла успешно!')
                 }
+                alert.alert()
             })
         })
         $('.add-button').on('click', function() {
@@ -69,7 +70,7 @@ $entity = $arResult['ENTITY'];
         <?=$actionTitle?> элемента
     </h3>
     <form class="text-center w-50" id="form-edit">
-        <div class="alert alert-success d-none" role="alert">
+        <div class="alert alert-success d-none sticky-top" role="alert">
         </div>
         <?php if (isset($elem)): ?>
             <input type="hidden" name="ID" value="<?=$elem['ID']?>">
@@ -87,6 +88,7 @@ $entity = $arResult['ENTITY'];
             </div>
         <?php endif;?>
         <?php foreach ($arResult['PROPS'] as $prop): ?>
+        <?php if ($prop['CODE'] == 'MANAGER') $prop['PROPERTY_TYPE'] = 'L'?>
         <?php if ($prop['CODE'] == 'KEY'):?>
                 <input type="hidden" name="<?=$prop['CODE']?>" value="<?=$arResult['KEY']?>">
         <?php elseif ($prop['PROPERTY_TYPE'] == 'S' || $prop['PROPERTY_TYPE'] == 'N'): ?>
@@ -102,10 +104,17 @@ $entity = $arResult['ENTITY'];
                                    id="<?= $key == 0 ? $prop['CODE'] : '' ?>"
                                    name="<?=$prop['CODE']?>">
                         <?php endforeach; ?>
-                    <?php else: ?>
+                    <?php else:
+                        if ($prop['USER_TYPE'] == 'DateTime') {
+                            $value = $elem[$prop['CODE']]['VALUE'];
+                            $value = FormatDate("Y-m-d H:i", MakeTimeStamp($value));
+                            $elem[$prop['CODE']]['VALUE'] = str_replace(' ', 'T', $value);
+                        }
+                        ?>
                     <input class="form-control"
                            value="<?= isset($elem) ? $elem[$prop['CODE']]['VALUE'] : ""?>"
-                           type="text" id="<?=$prop['CODE']?>"
+                           type="<?= $prop['USER_TYPE'] == 'DateTime' ? 'datetime-local' : 'text'?>"
+                           id="<?=$prop['CODE']?>"
                            name="<?=$prop['CODE']?>">
                     <?php endif; ?>
                 </div>
@@ -125,7 +134,7 @@ $entity = $arResult['ENTITY'];
                         <?php if (isset($elem)):?>
                             <?php foreach ($elem[$prop['CODE']]['VALUE'] as $key => $element):?>
                             <select class="form-select <?=$key > 0 ? 'mt-3' : ''?>"
-                                    id="<?=$key == 0 ? $prop['CODE'] : '' ?>"
+                                    <?=$key == 0 ? "id = " . $prop['CODE'] : '' ?>
                                     name="<?=$prop['CODE']?>[]">
                                 <?php foreach ($prop['VALUES'] as $id => $value): ?>
                                     <option <?php

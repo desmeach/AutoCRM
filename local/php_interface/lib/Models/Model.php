@@ -9,6 +9,7 @@ namespace lib\Models;
 
 require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
 
+use Bitrix\Main\Type\DateTime;
 use CIBlockElement;
 use CModule;
 use Exception;
@@ -82,7 +83,12 @@ abstract class Model {
                     $PROPS[$code][] = $subValue;
                 }
             } else {
-                $PROPS[$code] = $value;
+                if (str_contains($code, 'DATE')) {
+                    $date = new DateTime(str_replace('T', ' ', $value) . ':00', "Y-m-d H:i:s");
+                    $PROPS[$code] = $date->toString();
+                }
+                else
+                    $PROPS[$code] = $value;
             }
         }
         return $PROPS;

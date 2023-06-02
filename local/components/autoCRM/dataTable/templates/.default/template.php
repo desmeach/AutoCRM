@@ -14,7 +14,7 @@ use lib\Controllers\BranchesController;
 ?>
 <script src='/local/scripts/date_picker.min.js'></script>
 <script>
-    let table, removeConfirmation, removeElemID, entity;
+    let table, removeElemID, entity;
     async function setTableData() {
         table.clear().draw()
         let startDate = $('#date-range').val().split('-')[0]
@@ -51,7 +51,7 @@ use lib\Controllers\BranchesController;
             $('.remove-button').on('click', function() {
                 removeElemID =  $(this).data('elem-id')
                 entity = $(this).data('entity')
-                removeConfirmation.dialog('open')
+                $('#remove-dialog').modal('show')
             });
         });
     }
@@ -90,28 +90,9 @@ use lib\Controllers\BranchesController;
                 <?php endforeach;?>
             ]
         });
-        removeConfirmation = $('.remove-confirmation').dialog({
-            autoOpen: false,
-            modal: true,
-            title: 'Подтвердите удаление',
-            resizable: false,
-            draggable: false,
-            width: 400,
-            buttons: [
-                {
-                    text: 'Да',
-                    click: function() {
-                        removeElement()
-                        $(this).dialog('close');
-                    }
-                },
-                {
-                    text: 'Нет',
-                    click: function() {
-                        $(this).dialog('close');
-                    }
-                }
-            ]
+        $('#remove-submit').on('click', function () {
+            removeElement();
+            $('#remove-dialog').modal('hide')
         })
         $('#submit').click(function() {
             setTableData()
@@ -166,8 +147,22 @@ use lib\Controllers\BranchesController;
     </tbody>
 </table>
 
-<div class='remove-confirmation'>
-    <p>Вы точно хотите удалить элемент?</p>
+<div class="modal fade" id="remove-dialog" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="remove-dialog-title">Подтверждение удаления</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Вы точно хотите удалить элемент?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отклонить</button>
+                <button type="button" class="btn btn-primary" id="remove-submit">Подтвердить</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 

@@ -44,7 +44,7 @@ class ClientsModel extends Model {
             'ID', 'NAME', 'PROPERTY_EMAIL',
         ];
         $userData = CIBlockElement::GetList(false, $arFilter, false, false, $arSelect)->GetNextElement();
-        return $userData = array_merge($userData->GetFields(), $userData->GetProperties());
+        return array_merge($userData->GetFields(), $userData->GetProperties());
     }
     public static function getListForDataTable($filter): bool|string|null {
         try {

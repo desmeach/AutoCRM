@@ -1,10 +1,16 @@
 <?php
 global $APPLICATION;
 
+use lib\Controllers\MastersController;
+use lib\Controllers\ProductsController;
+
 require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/header.php");
 $APPLICATION->SetTitle("Канбан");
 const HANDLER_PATH = '/local/php_interface/lib/Controllers/';
 const HANDLER_NAME = 'ControllerHandler.php';
+
+$products = ProductsController::getList();
+$masters = MastersController::getList();
 ?>
     <script src="/local/scripts/date_picker.min.js"></script>
     <script>
@@ -31,7 +37,9 @@ const HANDLER_NAME = 'ControllerHandler.php';
                 response.forEach(e => {
                     renderCard(e);
                 })
-                $('.card').draggable()
+                $('.card').draggable({
+                    cursor: "grabbing",
+                })
             })
         }
         async function updateCard(id) {
@@ -47,7 +55,9 @@ const HANDLER_NAME = 'ControllerHandler.php';
             }).done(function(response) {
                 let elem = response[0]
                 renderCard(elem)
-                $('.card').draggable()
+                $('.card').draggable({
+                    cursor: "grabbing",
+                })
             })
         }
         function renderCard(elem) {
@@ -67,7 +77,12 @@ const HANDLER_NAME = 'ControllerHandler.php';
                     $('#3').append(
                         '<div class="card mb-2" id="' + elem.id + '" style="width: 15rem; font-size: 14px;"> ' +
                         '<div class="card-body"> ' +
-                        '<h5 class="card-title">#' + elem.id + '</h5> ' +
+                        '<h5 class="card-title">' +
+                        '<a class="card-text order-id" ' +
+                        'href="/orders/detail/index.php?ID=' + elem.id + '" ' +
+                        'style="text-decoration: none; color: black;">' + '#' + elem.id + '</a>' +
+                        '<span style="font-size: 14px;" class="float-end card-text order-car-model">' + elem['car']['BRAND']['VALUE'] +
+                        ' </span><br>' + '</h5> ' +
                         '<h6 class="card-subtitle mb-2 text-muted">' + elem['date_receive'] + '</h6> ' +
                         '<a class="card-text order-client" ' +
                         'href="/clients/detail/index.php?ID=' + elem['client']['ID'] + '" ' +
@@ -77,14 +92,19 @@ const HANDLER_NAME = 'ControllerHandler.php';
                         'style="text-decoration: none; color: black;">' +
                         'VIN: ' + elem['car']['NAME'] + ' </a><br>' +
                         '<span class="card-text order-products">Услуги: ' + elem['products'].join(', ') + '</span><br> ' +
-                        '<a href="" class="card-link reject">Отклонить</a></div></div>'
+                        `<a href="" class="card-link reject" data-element-id="${elem.id}">Отклонить</a></div></div>`
                     );
                     break;
                 case 'Запланирована':
                     $('#5').append(
                         '<div class="card mb-2" draggable="true" id="' + elem.id + '" style="width: 15rem; font-size: 14px;"> ' +
                         '<div class="card-body"> ' +
-                        '<h5 class="card-title">#' + elem.id + '</h5> ' +
+                        '<h5 class="card-title">' +
+                        '<a class="card-text order-id" ' +
+                        'href="/orders/detail/index.php?ID=' + elem.id + '" ' +
+                        'style="text-decoration: none; color: black;">' + '#' + elem.id + '</a>' +
+                        '<span style="font-size: 14px;" class="float-end card-text order-car-model">' + elem['car']['BRAND']['VALUE'] +
+                        ' </span><br>' + '</h5> ' +
                         '<h6 class="card-subtitle mb-2 text-muted">' + elem['date_receive'] + '</h6> ' +
                         '<a class="card-text order-client" ' +
                         'href="/clients/detail/index.php?ID=' + elem['client']['ID'] + '" ' +
@@ -95,6 +115,8 @@ const HANDLER_NAME = 'ControllerHandler.php';
                         'href="/cars/detail/index.php?ID=' + elem['car']['ID'] + '" ' +
                         'style="text-decoration: none; color: black;">' +
                         'VIN: ' + elem['car']['NAME'] + ' </a><br>' +
+                        '<span class="card-text order-manager">' +
+                        'Менеджер: ' + elem['manager']['LAST_NAME'] + ' ' + elem['manager']['NAME'] + ' </span><br>' +
                         '<span class="card-text order-products">Услуги: ' + elem['products'].join(', ') + '</span><br> '
                     );
                     break;
@@ -102,7 +124,12 @@ const HANDLER_NAME = 'ControllerHandler.php';
                     $('#6').append(
                         '<div class="card mb-2" id="' + elem.id + '" style="width: 15rem; font-size: 14px;"> ' +
                         '<div class="card-body"> ' +
-                        '<h5 class="card-title">#' + elem.id + '</h5> ' +
+                        '<h5 class="card-title">' +
+                        '<a class="card-text order-id" ' +
+                        'href="/orders/detail/index.php?ID=' + elem.id + '" ' +
+                        'style="text-decoration: none; color: black;">' + '#' + elem.id + '</a>' +
+                        '<span style="font-size: 14px;" class="float-end card-text order-car-model">' + elem['car']['BRAND']['VALUE'] +
+                        ' </span><br>' + '</h5> ' +
                         '<h6 class="card-subtitle mb-2 text-muted">' + elem['date_receive'] + '</h6> ' +
                         '<a class="card-text order-client" ' +
                         'href="/clients/detail/index.php?ID=' + elem['client']['ID'] + '" ' +
@@ -111,6 +138,12 @@ const HANDLER_NAME = 'ControllerHandler.php';
                         'href="/cars/detail/index.php?ID=' + elem['car']['ID'] + '" ' +
                         'style="text-decoration: none; color: black;">' +
                         'VIN: ' + elem['car']['NAME'] + ' </a><br>' +
+                        '<span class="card-text order-manager">' +
+                        'Менеджер: ' + elem['manager']['LAST_NAME'] + ' ' + elem['manager']['NAME'] + ' </span><br>' +
+                        '<a class="card-text order-master" ' +
+                        'href="/masters/detail/index.php?ID=' + elem['master']['ID'] + '" ' +
+                        'style="text-decoration: none; color: black;">' +
+                        'Мастер: ' + elem['master']['NAME'] + ' </a><br>' +
                         '<span class="card-text order-products">Услуги: ' + elem['products'].join(', ') + '</span><br> ' +
                         `<a href="" class="card-link end-button" data-element-id="${elem.id}">Завершить</a></div></div>`
                     );
@@ -120,135 +153,139 @@ const HANDLER_NAME = 'ControllerHandler.php';
             $('.card').off( "click", ".end-button")
             $('.reject').on('click', function(events) {
                 events.preventDefault();
-                const orderID = $(this).parent().parent().attr('id')
-                $('.reject-dialog').dialog('option', 'title', 'Отклонение заявки #' + orderID)
-                $('.reject-dialog').dialog('open')
+                const id = $(this).data('element-id')
+                $('#reject-dialog-title').text('Завершение заказа #' + id)
+                $('#manager-message-text').val('');
+                $('#reject-dialog').modal('show')
             })
             $('.end-button').on('click', function(events) {
                 events.preventDefault();
                 let id = $(this).data('element-id')
-                $('.end-dialog').dialog('option', 'title', 'Завершение заказа #' + id);
-                $('.end-dialog').dialog('open')
+                $('#end-dialog-title').text('Завершение заказа #' + id)
+                $('#products-list').val('default');
+                $('#products-list').selectpicker('refresh');
+                $('#master-message-text').val('');
+                $('#end-dialog').modal('show')
             })
         }
         $(document).ready(function () {
             setData();
-            setInterval(setData, 30000);
-            status.droppable({
+            setInterval(setData, 5000);
+            $('.status').droppable({
                 drop: function (event, ui) {
                     let item = $(ui.draggable)
-                    if (!item.attr('class').includes('card'))
+                    let status = event.target.id
+                    let id = item.attr('id')
+                    if (!item.attr('class').includes('card')) {
                         return
+                    }
                     item.css({
                         'left': 0,
                         'top': 0,
                     })
                     event.target.append(item[0])
+                    if (Number(status) === 6) {
+                        $('#start-dialog-title').text('Начало работы над заказом #' + id)
+                        $('#masters-list').val('default');
+                        $('#masters-list').selectpicker('refresh');
+                        $('#start-dialog').modal('show')
+                        return
+                    }
                     $.ajax({
                         method: "POST",
                         url: "/local/scripts/updateOrderStatus.php",
-                        data: { ID: item.attr('id'), STATUS: event.target.id }
+                        data: { ID: id, STATUS: status }
                     }).done(() => {
-                        updateCard(item.attr('id'))
+                        updateCard(id)
                     });
                 }
             });
-            $('.reject-dialog').dialog({
-                autoOpen: false,
-                modal: true,
-                resizable: false,
-                draggable: false,
-                width: 500,
-                maxHeight: 'auto',
-                buttons: [
-                    {
-                        text: 'Подтвердить',
-                        click: function() {
-                            let id = $(this).dialog('option', 'title').split('#')[1]
-                            $.ajax({
-                                method: "POST",
-                                url: "/local/scripts/updateOrderStatus.php",
-                                data: { ID: id, STATUS: 4 }
-                            });
-                            updateCard(id)
-                            $(this).dialog('close');
-                        }
-                    },
-                    {
-                        text: 'Отменить',
-                        click: function() {
-                            $(this).dialog('close');
-                        }
+            $('#reject-submit').on('click', function () {
+                let id = $('#reject-dialog-title').text().split('#')[1]
+                let comment = $('#manager-message-text').val()
+                $.ajax({
+                    method: "POST",
+                    url: "/local/scripts/updateOrderStatus.php",
+                    data: {
+                        ID: id,
+                        STATUS: 4,
+                        MANAGER_COMMENT: comment,
                     }
-                ]
+                }).done(function () {
+                    $('#reject-dialog').modal('hide')
+                    updateCard(id)
+                });
             })
-            $('.end-dialog').dialog({
-                autoOpen: false,
-                modal: true,
-                resizable: false,
-                draggable: false,
-                width: 500,
-                maxHeight: 'auto',
-                buttons: [
-                    {
-                        text: 'Подтвердить',
-                        click: function() {
-                            let id = $(this).dialog('option', 'title').split('#')[1]
-                            $.ajax({
-                                type: 'POST',
-                                url: '/local/scripts/getOrderReport.php',
-                                cache: false,
-                                data: {
-                                    'ID': id
-                                }
-                            }).done(function(response) {
-                                let path = '/include/docs/'
-                                let preview = response.slice(0, -4) + '.png'
-                                let file = response.slice(0, -4) + '.docx'
-                                $('#preview-img').attr('src', path + preview)
-                                $('#filename-download').attr('value', file)
-                                $.ajax({
-                                    method: "POST",
-                                    url: "/local/scripts/updateOrderStatus.php",
-                                    data: { ID: id, STATUS: 8 }
-                                });
-                                updateCard(id)
-                                $('.preview-dialog').dialog('open')
-                            })
-                            $(this).dialog('close');
-                        }
-                    },
-                    {
-                        text: 'Отменить',
-                        click: function() {
-                            $(this).dialog('close');
-                        }
+            $('#start-submit').on('click', function () {
+                let id = $('#start-dialog-title').text().split('#')[1]
+                let master = $('#masters-list').val()
+                if (!master) {
+                    updateCard(id)
+                    $('#start-dialog').modal('hide')
+                    return
+                }
+                $.ajax({
+                    method: "POST",
+                    url: "/local/scripts/updateOrderStatus.php",
+                    data: {
+                        ID: id,
+                        STATUS: 6,
+                        MASTER: master,
                     }
-                ]
+                }).done(function () {
+                    $('#start-dialog').modal('hide')
+                    updateCard(id)
+                });
             })
-            $('.preview-dialog').dialog({
-                autoOpen: false,
-                modal: true,
-                resizable: false,
-                draggable: false,
-                width: 800,
-                position:["center",20],
-                minHeight:"auto",
-                buttons: [
-                    {
-                        text: 'Сохранить',
-                        click: function() {
-                            let filename = $('#filename-download').val()
-                            window.location.href = "/local/scripts/downloadOrderReport.php?FILE=" + filename
-                        }
-                    },
-                    {
-                        text: 'Отменить',
-                        click: function() {
-                            $(this).dialog('close');
-                        }
+            $('#end-submit').on('click', function () {
+                let id = $('#end-dialog-title').text().split('#')[1]
+                let comment = $('#master-message-text').val()
+                let products = $('#products-list').val()
+                let mileage = $('#mileage-text').val()
+                var $body = $("body");
+                $(document).on({
+                    ajaxStart: function() { $body.addClass("loading"); },
+                    ajaxStop: function() { $body.removeClass("loading"); }
+                });
+                $.ajax({
+                    method: "POST",
+                    url: "/local/scripts/updateOrderStatus.php",
+                    data: {
+                        ID: id,
+                        STATUS: 8,
+                        MASTER_COMMENT: comment,
+                        PRODUCTS: products,
+                        MILEAGE: mileage,
                     }
-                ]
+                }).done(function () {
+                    $.ajax({
+                        type: 'POST',
+                        url: '/local/scripts/getOrderReport.php',
+                        cache: false,
+                        data: {
+                            'ID': id
+                        }
+                    }).done(function (response) {
+                        let path = '/include/docs/'
+                        console.log(response)
+                        let previewFirst = response + '-0001.jpg'
+                        let previewSecond = response + '-0002.jpg'
+                        let file = response + '.docx'
+                        console.log(path + previewFirst)
+                        $('#preview-img-1').attr('src', path + previewFirst)
+                        $('#preview-img-2').attr('src', path + previewSecond)
+                        $('#filename-download').attr('value', file)
+                        updateCard(id)
+                        $('#end-dialog').modal('hide')
+                        $('#preview-dialog').modal('show')
+                        $(document).off('ajaxStart')
+                        $(document).off('ajaxEnd')
+                    });
+                })
+            })
+            $('#preview-submit').on('click', function () {
+                let filename = $('#filename-download').val()
+                window.location.href = "/local/scripts/downloadOrderReport.php?FILE=" + filename
             })
         })
     </script>
@@ -270,18 +307,6 @@ const HANDLER_NAME = 'ControllerHandler.php';
             <input id="date-range" class="form-control" readonly>
         </div>
         <div class="col-auto">
-            <label for="status-filter" class="form-label">Статус заказа</label>
-            <select id="status-filter" class="form-select" aria-label="Default select example">
-                <option disabled selected>Статус заказа</option>
-                <option>Новая</option>
-                <option>Отклонена</option>
-                <option>Запланирована</option>
-                <option>В работе</option>
-                <option>Рекламация</option>
-                <option>Завершена</option>
-            </select>
-        </div>
-        <div class="col-auto">
             <button id="submit" type="submit" class="btn btn-primary">Применить</button>
         </div>
     </form>
@@ -298,19 +323,111 @@ const HANDLER_NAME = 'ControllerHandler.php';
         </div>
     </div>
 
-    <div class="reject-dialog">
-        <p>Подтвердите действие, чтобы отклонить заявку.</p>
-<!--        <p>Оставьте для клиента комментарий по отказу:</p>-->
-<!--        <textarea id="comment" class="form-control" placeholder="Напишите комментарий к заказу"></textarea>-->
+    <div class="modal fade" id="reject-dialog" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reject-dialog-title"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="reject-form">
+                        <p>Подтвердите действие, чтобы отклонить заявку.</p>
+                        <div class="form-group">
+                            <label for="manager-message-text" class="col-form-label">Оставьте комментарий по отказу:</label>
+                            <textarea class="form-control" name="manager-comment" id="manager-message-text"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отклонить</button>
+                    <button type="button" class="btn btn-primary" id="reject-submit">Подтвердить</button>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="end-dialog">
-        <p>Подтвердите действие, чтобы завершить работу над заявкой.</p>
-<!--        <p>Оставьте для клиента комментарий по отказу:</p>-->
-<!--        <textarea id="comment" class="form-control" placeholder="Напишите комментарий к заказу"></textarea>-->
+
+    <div class="modal fade" id="start-dialog" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="start-dialog-title">Начало работы над заказ-нарядом</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="start-form">
+                        <div class="form-group">
+                            <label for="masters-list" class="col-form-label">
+                                Укажите мастера, чтобы начать работу над заказ-нарядом:
+                            </label>
+                            <select class="form-control" id="masters-list">
+                                <?php foreach ($masters as $master): ?>
+                                    <option value="<?=$master['ID']?>"><?=$master['NAME']?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отклонить</button>
+                    <button type="button" class="btn btn-primary" id="start-submit">Подтвердить</button>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="preview-dialog">
-        <img id="preview-img" alt="Предпросмотр отчета" src="">
-        <input type="hidden" value="" id="filename-download">
+
+    <div class="modal fade" id="end-dialog" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="end-dialog-title"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="products-list" class="col-form-label">Выберите дополнительные работы (если были проведены):</label>
+                            <select multiple class="form-control selectpicker" id="products-list">
+                                <?php foreach ($products as $product): ?>
+                                    <option value="<?=$product['ID']?>"><?=$product['NAME']?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="mileage-text" class="col-form-label">Укажите итоговый пробег:</label>
+                            <input class="form-control" type="number" id="mileage-text">
+                        </div>
+                        <div class="form-group">
+                            <label for="master-message-text" class="col-form-label">Оставьте комментарий мастера:</label>
+                            <textarea class="form-control" id="master-message-text"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отклонить</button>
+                    <button type="button" class="btn btn-primary" id="end-submit">Подтвердить</button>
+                </div>
+            </div>
+        </div>
     </div>
-    <script src="/local/scripts/kanban_dnd.js"></script>
+
+    <div class="modal fade" id="preview-dialog" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="preview-dialog-title">Предпросмотр отчета</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img class="mx-auto d-block" width="800" id="preview-img-1" alt="Предпросмотр отчета" src="">
+                    <img class="mx-auto d-block" width="800" id="preview-img-2" alt="Предпросмотр отчета" src="">
+                    <input type="hidden" value="" id="filename-download">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отклонить</button>
+                    <button type="button" class="btn btn-primary" id="preview-submit">Подтвердить</button>
+                </div>
+            </div>
+        </div>
+    </div>
 <?php require($_SERVER["DOCUMENT_ROOT"] . "/bitrix/footer.php");?>

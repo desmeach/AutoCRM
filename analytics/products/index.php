@@ -3,8 +3,8 @@ require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");
 global $APPLICATION;
 $APPLICATION->SetTitle("Аналитика");
 
-use lib\Statistics\ClientsStatistic;
-$clientsStatistic = ClientsStatistic::getStatistic();
+use lib\Statistics\ProductsStatistic;
+$productsStatistic = ProductsStatistic::getStatistic();
 ?>
     <script>
         let table;
@@ -25,12 +25,10 @@ $clientsStatistic = ClientsStatistic::getStatistic();
                 ],
                 columns: [
                     {name: 'id', data: 'id'},
-                    {name: 'client', data: 'client'},
-                    {name: 'phone', data: 'phone'},
-                    {name: 'gender', data: 'gender'},
-                    {name: 'all_orders', data: 'all_orders'},
+                    {name: 'name', data: 'name'},
+                    {name: 'order_count', data: 'order_count'},
                     {name: 'total_sum', data: 'total_sum'},
-                    {name: 'popular_products', data: 'popular_products'},
+                    {name: 'relevant_products', data: 'relevant_products'},
                 ],
                 order: [[1, 'asc']]
             });
@@ -42,13 +40,18 @@ $clientsStatistic = ClientsStatistic::getStatistic();
                 for (let i = 0; i < headers.length; i++)
                     headersNames.push(headers[i].innerHTML)
                 let tableHTML = document.getElementById('table-body').outerHTML;
+                let data = {
+                    'table-body': tableHTML,
+                    'headers': JSON.stringify(headersNames)
+                }
+                let entity = $('#entity').val()
                 $.ajax({
                     type: 'POST',
-                    url: '/test.php',
+                    url: '/local/scripts/getAnalyticReport.php',
                     cache: false,
                     data: {
-                        'table-body': tableHTML,
-                        'headers': JSON.stringify(headersNames),
+                        data: data,
+                        entity: entity,
                     },
                 }).done(response => {
                     window.location.href = "/local/scripts/downloadOrderReport.php?FILE=" + response
@@ -60,6 +63,7 @@ $clientsStatistic = ClientsStatistic::getStatistic();
         })
     </script>
     <form class="row py-3 mb-3 mx-1 align-items-end bg-light" onsubmit="return false;">
+        <input type="hidden" value="products" name="entity" id="entity">
         <div class="col-auto">
             <label for="entity-filter" class="form-label">Выберите сущность для статистики</label>
             <select id="entity-filter" class="form-select" aria-label="">
@@ -81,26 +85,22 @@ $clientsStatistic = ClientsStatistic::getStatistic();
             <thead class="bg-light">
             <tr>
                 <th scope="col">ID</th>
-                <th scope="col">ФИО</th>
-                <th scope="col">Телефон</th>
-                <th scope="col">Пол</th>
+                <th scope="col">Наименование</th>
                 <th scope="col">Всего заказов</th>
-                <th scope="col">Сумма (руб.)</th>
-                <th scope="col">Популярные услуги</th>
+                <th scope="col">Сумма</th>
+                <th scope="col">Заказывают с</th>
             </tr>
             </thead>
             <tbody id="table-body">
-            <?php foreach ($clientsStatistic as $clientStatistic):?>
+            <?php foreach ($productsStatistic as $productStatistic):?>
                 <tr>
-                    <th scope="row"><?=$clientStatistic['ID']?></th>
-                    <td><?=$clientStatistic['NAME']?></td>
-                    <td><?=$clientStatistic['PHONE']['VALUE']?></td>
-                    <td><?=$clientStatistic['GENDER']['VALUE']?></td>
-                    <td><?=$clientStatistic['ORDERS_COUNT']?></td>
-                    <td><?=$clientStatistic['ORDERS_PRICE_SUMMARY']?></td>
+                    <th scope="row"><?=$productStatistic['ID']?></th>
+                    <td><?=$productStatistic['NAME']?></td>
+                    <td><?=$productStatistic['ORDERS_COUNT']?></td>
+                    <td><?=$productStatistic['TOTAL_SUM']?></td>
                     <td>
-                        <?php foreach ($clientStatistic['PRODUCTS_COUNT'] as $product => $count):?>
-                            <span><?=$product . ": " . $count?></span>
+                        <?php foreach ($productStatistic['RELEVANT_PRODUCTS'] as $value):?>
+                            <span><?=$value['product'] . ": " . $value['percantage']?></span>
                             <br/>
                         <?php endforeach;?>
                     </td>

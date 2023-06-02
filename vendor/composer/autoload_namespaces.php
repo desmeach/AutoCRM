@@ -8,4 +8,5 @@ $baseDir = dirname($vendorDir);
 return array(
     'Imagick' => array($vendorDir . '/calcinai/php-imagick/src'),
     'HTMLPurifier' => array($vendorDir . '/ezyang/htmlpurifier/library'),
+    'ConvertApi\\' => array($vendorDir . '/convertapi/convertapi-php/lib'),
 );

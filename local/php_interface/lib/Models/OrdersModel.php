@@ -38,14 +38,6 @@ class OrdersModel extends Model {
     }
     public static function getListForDataTable($filter): bool|string|null {
         try {
-            $statusCodes = [
-                'Новая' => 1,
-                'Отклонена' => 2,
-                'Запланирована' => 3,
-                'В работе' => 4,
-                'Рекламация' => 5,
-                'Завершена' => 6,
-            ];
             $shortStatuses = [
                 'Новая' => 'Новая',
                 'Отклонена' => 'Откл.',
@@ -75,8 +67,7 @@ class OrdersModel extends Model {
                         $order['CLIENT']['VALUE']['NAME'], 'clients'),
                     'car' => self::getItemDetailLink($order['CAR']['VALUE']['ID'],
                         $order['CAR']['VALUE']['NAME'], 'cars'),
-                    'status' => $statusCodes[$order['STATUS']['VALUE']] . '. '
-                        . $shortStatuses[$order['STATUS']['VALUE']],
+                    'status' => $shortStatuses[$order['STATUS']['VALUE']],
                     'products' => self::formatArrayToNumericListStr($order['PRODUCTS']['VALUE'], 'products'),
                     'total_price' => $order['TOTAL_PRICE']['VALUE'],
                     'date_receive' => $order['DATE_RECEIVE']['VALUE'],
@@ -108,6 +99,8 @@ class OrdersModel extends Model {
                     'car' => $order['CAR']['VALUE'],
                     'products' => $order['PRODUCTS']['VALUE'],
                     'status' => $order['STATUS']['VALUE'],
+                    'manager' => $order['MANAGER']['VALUE'],
+                    'master' => $order['MASTER']['VALUE'],
                     'total_price' => $order['TOTAL_PRICE']['VALUE'],
                     'date_receive' => $order['DATE_RECEIVE']['VALUE'],
                     'date_accept' => $order['DATE_ACCEPT']['VALUE'],
@@ -130,6 +123,8 @@ class OrdersModel extends Model {
                 'car' => $order['CAR']['VALUE'],
                 'products' => $order['PRODUCTS']['VALUE'],
                 'status' => $order['STATUS']['VALUE'],
+                'manager' => $order['MANAGER']['VALUE'],
+                'master' => $order['MASTER']['VALUE'],
                 'total_price' => $order['TOTAL_PRICE']['VALUE'],
                 'date_receive' => $order['DATE_RECEIVE']['VALUE'],
                 'date_accept' => $order['DATE_ACCEPT']['VALUE'],

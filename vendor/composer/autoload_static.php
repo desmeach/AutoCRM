@@ -69,6 +69,10 @@ class ComposerStaticInitd29b6ce959e563df5b4a83b9d0efa25e
         array (
             'Laminas\\Escaper\\' => 16,
         ),
+        'I' => 
+        array (
+            'Ilovepdf\\' => 9,
+        ),
         'G' => 
         array (
             'GuzzleHttp\\Psr7\\' => 16,
@@ -78,6 +82,7 @@ class ComposerStaticInitd29b6ce959e563df5b4a83b9d0efa25e
         'F' => 
         array (
             'FontLib\\' => 8,
+            'Firebase\\JWT\\' => 13,
         ),
         'D' => 
         array (
@@ -200,6 +205,10 @@ class ComposerStaticInitd29b6ce959e563df5b4a83b9d0efa25e
         array (
             0 => __DIR__ . '/..' . '/laminas/laminas-escaper/src',
         ),
+        'Ilovepdf\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/ilovepdf/ilovepdf-php/src',
+        ),
         'GuzzleHttp\\Psr7\\' => 
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
@@ -215,6 +224,10 @@ class ComposerStaticInitd29b6ce959e563df5b4a83b9d0efa25e
         'FontLib\\' => 
         array (
             0 => __DIR__ . '/..' . '/phenx/php-font-lib/src/FontLib',
+        ),
+        'Firebase\\JWT\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
         ),
         'Dompdf\\' => 
         array (
@@ -263,6 +276,13 @@ class ComposerStaticInitd29b6ce959e563df5b4a83b9d0efa25e
             'HTMLPurifier' => 
             array (
                 0 => __DIR__ . '/..' . '/ezyang/htmlpurifier/library',
+            ),
+        ),
+        'C' => 
+        array (
+            'ConvertApi\\' => 
+            array (
+                0 => __DIR__ . '/..' . '/convertapi/convertapi-php/lib',
             ),
         ),
     );

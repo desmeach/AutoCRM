@@ -46,7 +46,7 @@ while ($prop = $propsList->GetNext()) {
             $arResult['PROPS'][$i]['VALUES'][$list_fields['ID']] = $list_fields['VALUE'];
         }
     }
-    elseif ($prop['PROPERTY_TYPE'] == 'E') {
+    elseif ($prop['PROPERTY_TYPE'] == 'E' || $prop['CODE'] == 'MANAGER') {
         if ($prop['CODE'] == 'MANAGER') {
             $elements = ManagersController::getList();
             foreach ($elements as $element) {
