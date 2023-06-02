@@ -8,9 +8,12 @@
 if ($_GET['FILE']) {
     $path = $_SERVER['DOCUMENT_ROOT'] . "/include/docs/";
     $pdf = $path . substr($_GET['FILE'], 0, -4) . 'pdf';
-    $png = $path . substr($_GET['FILE'], 0, -4) . 'png';
+    $png1 = $path . substr($_GET['FILE'], 0, -5) . '-0001.jpg';
+    $png2 = $path . substr($_GET['FILE'], 0, -5) . '-0002.jpg';
     unlink($pdf);
-    unlink($png);
+    unlink($png1);
+    unlink($png2);
+    unlink($path . 'output.zip');
     file_force_download($_SERVER['DOCUMENT_ROOT'] . "/include/docs/" . $_GET['FILE']);
 }
 

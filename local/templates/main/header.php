@@ -6,13 +6,13 @@ $unAuthPages = '/\/auth\/.*/';
 $showMenu = !preg_match($unAuthPages, $_SERVER['REQUEST_URI']);
 if (!$USER->IsAuthorized() && $showMenu) {
     LocalRedirect('/auth');
-};
+}
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="<?= LANGUAGE_ID ?>">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=800, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -21,10 +21,11 @@ if (!$USER->IsAuthorized() && $showMenu) {
     <meta name="msapplication-TileColor" content="#da532c">
     <meta name="theme-color" content="#ffffff">
     <meta http-equiv="Content-Type" content="text/html;charset=<?=SITE_CHARSET?>"/>
+    <?php Asset::getInstance()->addCss('https://ajax.aspnetcdn.com/ajax/jquery.ui/1.10.3/themes/base/jquery-ui.css'); ?>
     <?php Asset::getInstance()->addCss('https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css'); ?>
     <?php Asset::getInstance()->addCss('https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css'); ?>
     <?php Asset::getInstance()->addCss('https://cdn.datatables.net/v/bs5/dt-1.13.3/fh-3.3.1/datatables.min.css'); ?>
-    <?php Asset::getInstance()->addCss('https://ajax.aspnetcdn.com/ajax/jquery.ui/1.10.3/themes/base/jquery-ui.css'); ?>
+    <?php Asset::getInstance()->addCss('https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/css/bootstrap-select.min.css'); ?>
     <?php Asset::getInstance()->addCss(SITE_TEMPLATE_PATH . '/template_styles.css'); ?>
     <?php Asset::getInstance()->addJs('https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js') ?>
     <?php Asset::getInstance()->addJs('https://ajax.aspnetcdn.com/ajax/jquery.ui/1.10.3/jquery-ui.min.js') ?>
@@ -32,28 +33,31 @@ if (!$USER->IsAuthorized() && $showMenu) {
     <?php Asset::getInstance()->addJs('https://cdn.datatables.net/v/bs5/dt-1.13.3/fh-3.3.1/datatables.min.js') ?>
     <?php Asset::getInstance()->addJs('https://cdn.jsdelivr.net/momentjs/latest/moment.min.js') ?>
     <?php Asset::getInstance()->addJs('https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js') ?>
-	<?php $APPLICATION->ShowCSS();?>
-	<?php $APPLICATION->ShowHeadStrings();?>
-	<?php $APPLICATION->ShowHeadScripts();?>
-    <script>
-        $(document).ready(function () {
-            function timer() {
-                $('#timer').html(moment().format('HH:mm'));
-            }
-            timer()
-            setInterval(timer, 1000)
-        });
-    </script>
-<title><?php $APPLICATION->ShowTitle()?></title>
+    <?php Asset::getInstance()->addJs('/local/scripts/header_time.min.js') ?>
+    <?php Asset::getInstance()->addJs('/local/scripts/scroller.min.js') ?>
+    <?php Asset::getInstance()->addJs('https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.14.0-beta2/js/bootstrap-select.min.js') ?>
+    <?php $APPLICATION->ShowCSS();?>
+    <?php $APPLICATION->ShowHeadStrings();?>
+    <?php $APPLICATION->ShowHeadScripts();?>
+    <title><?php $APPLICATION->ShowTitle()?></title>
 </head>
-    <div id="panel"><?php $APPLICATION->ShowPanel();?></div>
+<!--    <div id="panel">--><?php //$APPLICATION->ShowPanel();?><!--</div>-->
+    <button
+            type="button"
+            class="btn btn-info btn-floating btn-lg rounded-circle"
+            id="btn-back-to-top"
+            name="btn-back-to-top"
+            >
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="white" class="bi bi-arrow-up" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
+        </svg>
+    </button>
     <div id="header">
         <div class="row align-items-center">
-            <div class="col-1 my-2" style="margin-left: 1%">
-                <a href="/orders"><img id="logo" src="/include/logos/logo.png" alt="Logo" width="150"></a>
+            <div class="col-1 my-3" style="margin-left: 1%">
+                <a href="/orders"><img id="logo" src="/include/logos/logo.png" alt="Logo" width="150" height="41"></a>
             </div>
             <div class="col my-2 text-center" id="timer-block">
-                    <!--                <h2>CRM для автосервиса</h2>-->
                     <h2 class="my-2" id="timer-head">Время: <span id="timer"></span></h2>
             </div>
             <div class="col-1">

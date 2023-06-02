@@ -29,4 +29,11 @@ class BranchesController extends Controller {
             return 'Ошибка запроса';
         return BranchesModel::add($_POST);
     }
+    public static function delete($ID): array {
+        return BranchesModel::delete($ID);
+    }
+    public static function update() {
+        header('Content-Type: json/application');
+        return BranchesModel::update();
+    }
 }

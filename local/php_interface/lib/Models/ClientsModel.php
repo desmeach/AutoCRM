@@ -35,6 +35,17 @@ class ClientsModel extends Model {
             return null;
         }
     }
+    public static function getItemByPhoneNumber($phone) {
+        $arFilter = [
+            'IBLOCK_ID' => 1,
+            'PROPERTY_PHONE' => $phone
+        ];
+        $arSelect = [
+            'ID', 'NAME', 'PROPERTY_EMAIL',
+        ];
+        $userData = CIBlockElement::GetList(false, $arFilter, false, false, $arSelect)->GetNextElement();
+        return array_merge($userData->GetFields(), $userData->GetProperties());
+    }
     public static function getListForDataTable($filter): bool|string|null {
         try {
             $items = self::getList($filter);
@@ -67,7 +78,26 @@ class ClientsModel extends Model {
         $ID = self::addItem($data, self::$IBLOCK_ID);
         return $ID ?? ['error' => 'Ошибка при создании элемента'];
     }
-    public static function update($props) {
-
+    public static function update(): bool|string {
+        return self::updateElem(self::$IBLOCK_ID);
+    }
+    public static function delete($ID) {
+        $client = CIBlockElement::GetList(false,
+            ['IBLOCK_ID' => self::$IBLOCK_ID, 'ID' => $ID],
+            false, false, ['PROPERTY_KEY', 'PROPERTY_CARS']);
+        $keys = [];
+        $cars = [];
+        $userKey = getKey();
+        while ($props = $client->GetNext()) {
+            $key = $props['PROPERTY_KEY_VALUE'];
+            $cars[$props['PROPERTY_CARS_VALUE']] = 1;
+            if ($key !== $userKey)
+                $keys[] = $key;
+        }
+        foreach ($cars as $carID => $value)
+            CarsModel::delete($carID);
+        if (empty($keys))
+            $keys = '';
+        CIBlockElement::SetPropertyValuesEx($ID, self::$IBLOCK_ID, ['KEY' => $keys]);
     }
 }

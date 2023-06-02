@@ -12,9 +12,9 @@ const HANDLER_NAME = 'ControllerHandler.php';
 
 use lib\Controllers\BranchesController;
 ?>
-<script src='/local/scripts/date_picker.js'></script>
+<script src='/local/scripts/date_picker.min.js'></script>
 <script>
-    let table, removeConfirmation, removeElemID, entity;
+    let table, removeElemID, entity;
     async function setTableData() {
         table.clear().draw()
         let startDate = $('#date-range').val().split('-')[0]
@@ -38,30 +38,30 @@ use lib\Controllers\BranchesController;
             },
         }).done(function(response) {
             response.forEach(e => {
-                let linkID = e.id.split('>')[1].split('<')[0].trim()
+                 let linkID = e.id.split('>')[1].split('<')[0].trim()
                 e.actions =
                     <?php if ($arResult['ENTITY'] != 'managers'):?>
-                    `<a style='cursor: pointer' class='remove-button' data-elem-id=${linkID}, data-entity=<?=$arResult['ENTITY']?>><img class='mx-4' src='/include/actions_icons/remove.png' alt='Remove'></a>` +
-                    `<a style='cursor: pointer' class='edit-button' href='edit/index.php?ID=${linkID}'><img src='/include/actions_icons/edit.png' alt='Remove'></a>`
+                    `<a style='cursor: pointer' class='remove-button' data-elem-id=${linkID}, data-entity=<?=$arResult['ENTITY']?>><img width="15" height="15" class='mx-4' src='/include/actions_icons/remove.png' alt='Remove'></a>` +
+                    `<a style='cursor: pointer' class='edit-button' href='edit/index.php?ID=${linkID}'><img width="20" height="20" src='/include/actions_icons/edit.png' alt='Remove'></a>`
                     <?php else:?>
-                    `<a style='cursor: pointer' class='remove-button' data-elem-id=${linkID}, data-entity=<?=$arResult['ENTITY']?>><img class='mx-4' src='/include/actions_icons/remove.png' alt='Remove'></a>`
+                    `<a style='cursor: pointer' class='remove-button' data-elem-id=${linkID}, data-entity=<?=$arResult['ENTITY']?>><img width="15" height="15" class='mx-4' src='/include/actions_icons/remove.png' alt='Remove'></a>`
                     <?php endif;?>
                 table.row.add(e).draw();
             })
             $('.remove-button').on('click', function() {
                 removeElemID =  $(this).data('elem-id')
-                entity =  $(this).data('entity')
-                removeConfirmation.dialog('open')
+                entity = $(this).data('entity')
+                $('#remove-dialog').modal('show')
             });
         });
     }
     function removeElement() {
         $.ajax({
             type: 'POST',
-            url: '/local/scripts/remove.php',
+            url: '/local/php_interface/lib/Controllers/ControllerHandler.php',
             cache: false,
             data: {
-                'remove': 'yes',
+                'ACTION': 'delete',
                 'ID': removeElemID,
                 'ENTITY': entity,
             }
@@ -90,28 +90,9 @@ use lib\Controllers\BranchesController;
                 <?php endforeach;?>
             ]
         });
-        removeConfirmation = $('.remove-confirmation').dialog({
-            autoOpen: false,
-            modal: true,
-            title: 'Подтвердите удаление',
-            resizable: false,
-            draggable: false,
-            width: 400,
-            buttons: [
-                {
-                    text: 'Да',
-                    click: function() {
-                        $(this).dialog('close');
-                        removeElement()
-                    }
-                },
-                {
-                    text: 'Нет',
-                    click: function() {
-                        $(this).dialog('close');
-                    }
-                }
-            ]
+        $('#remove-submit').on('click', function () {
+            removeElement();
+            $('#remove-dialog').modal('hide')
         })
         $('#submit').click(function() {
             setTableData()
@@ -157,7 +138,7 @@ use lib\Controllers\BranchesController;
     </div>
 </form>
 <a style='cursor: pointer; text-decoration: none; color: black;' class='add-button' href="add/">
-    <img class='mb-3 mx-2' src='/include/actions_icons/add.png' alt='Add'>
+    <img width="26" height="27" class='mb-3 mx-2' src='/include/actions_icons/add.png' alt='Add'>
 </a>
 <table id='data-table' class='table table-hover'>
     <thead class='bg-light'>
@@ -166,8 +147,22 @@ use lib\Controllers\BranchesController;
     </tbody>
 </table>
 
-<div class='remove-confirmation'>
-    <p>Вы точно хотите удалить элемент?</p>
+<div class="modal fade" id="remove-dialog" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="remove-dialog-title">Подтверждение удаления</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Вы точно хотите удалить элемент?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отклонить</button>
+                <button type="button" class="btn btn-primary" id="remove-submit">Подтвердить</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 

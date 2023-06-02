@@ -51,6 +51,7 @@ $entity = $arResult['ENTITY'];
                     alert.addClass('alert-success')
                     alert.html('Операция прошла успешно!')
                 }
+                alert.alert()
             })
         })
         $('.add-button').on('click', function() {
@@ -69,7 +70,7 @@ $entity = $arResult['ENTITY'];
         <?=$actionTitle?> элемента
     </h3>
     <form class="text-center w-50" id="form-edit">
-        <div class="alert alert-success d-none" role="alert">
+        <div class="alert alert-success d-none sticky-top" role="alert">
         </div>
         <?php if (isset($elem)): ?>
             <input type="hidden" name="ID" value="<?=$elem['ID']?>">
@@ -87,6 +88,7 @@ $entity = $arResult['ENTITY'];
             </div>
         <?php endif;?>
         <?php foreach ($arResult['PROPS'] as $prop): ?>
+        <?php if ($prop['CODE'] == 'MANAGER') $prop['PROPERTY_TYPE'] = 'L'?>
         <?php if ($prop['CODE'] == 'KEY'):?>
                 <input type="hidden" name="<?=$prop['CODE']?>" value="<?=$arResult['KEY']?>">
         <?php elseif ($prop['PROPERTY_TYPE'] == 'S' || $prop['PROPERTY_TYPE'] == 'N'): ?>
@@ -102,10 +104,17 @@ $entity = $arResult['ENTITY'];
                                    id="<?= $key == 0 ? $prop['CODE'] : '' ?>"
                                    name="<?=$prop['CODE']?>">
                         <?php endforeach; ?>
-                    <?php else: ?>
+                    <?php else:
+                        if ($prop['USER_TYPE'] == 'DateTime') {
+                            $value = $elem[$prop['CODE']]['VALUE'];
+                            $value = FormatDate("Y-m-d H:i", MakeTimeStamp($value));
+                            $elem[$prop['CODE']]['VALUE'] = str_replace(' ', 'T', $value);
+                        }
+                        ?>
                     <input class="form-control"
                            value="<?= isset($elem) ? $elem[$prop['CODE']]['VALUE'] : ""?>"
-                           type="text" id="<?=$prop['CODE']?>"
+                           type="<?= $prop['USER_TYPE'] == 'DateTime' ? 'datetime-local' : 'text'?>"
+                           id="<?=$prop['CODE']?>"
                            name="<?=$prop['CODE']?>">
                     <?php endif; ?>
                 </div>
@@ -121,22 +130,45 @@ $entity = $arResult['ENTITY'];
                     <label for="<?=$prop['CODE']?>">
                         <?=$prop['NAME']?>
                     </label>
-                    <?php if (isset($elem) && $prop['MULTIPLE'] == 'Y'):?>
-                        <?php foreach ($elem[$prop['CODE']]['VALUE'] as $key => $element):?>
-                        <select class="form-select <?=$key > 0 ? 'mt-3' : ''?>"
-                                id="<?=$key == 0 ? $prop['CODE'] : '' ?>"
-                                name="<?=$prop['CODE']?>[]">
-                            <?php foreach ($prop['VALUES'] as $id => $value): ?>
-                                <option <?php
-                                if ($id == $element['ID'])
-                                    echo 'selected';
-                                ?>
-                                    value="<?=$id?>"><?=$value?></option>
-                            <?php endforeach;?>
-                        </select>
-                        <?php endforeach; ?>
+                    <?php if ($prop['MULTIPLE'] == 'Y'):?>
+                        <?php if (isset($elem)):?>
+                            <?php foreach ($elem[$prop['CODE']]['VALUE'] as $key => $element):?>
+                            <select class="form-select <?=$key > 0 ? 'mt-3' : ''?>"
+                                    <?=$key == 0 ? "id = " . $prop['CODE'] : '' ?>
+                                    name="<?=$prop['CODE']?>[]">
+                                <?php foreach ($prop['VALUES'] as $id => $value): ?>
+                                    <option <?php
+                                    if ($id == $element['ID'])
+                                        echo 'selected';
+                                    ?>
+                                        value="<?=$id?>"><?=$value?></option>
+                                <?php endforeach;?>
+                            </select>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <select class="form-select"
+                                    id="<?=$prop['CODE']?>"
+                                    name="<?=$prop['CODE']?>">
+                                <?php foreach ($prop['VALUES'] as $id => $value):?>
+                                    <option
+                                        <?php
+                                        if (is_array($elem[$prop['CODE']]['VALUE']))
+                                            $elValue = $elem[$prop['CODE']]['VALUE']['NAME'];
+                                        else
+                                            $elValue = $elem[$prop['CODE']]['VALUE'];
+                                        if ($value == $elValue)
+                                            echo 'selected';
+                                        ?>
+                                        value="<?=$id?>">
+                                        <?=$value?>
+                                    </option>
+                                <?php endforeach;?>
+                            </select>
+                        <?php endif;?>
                     <?php else: ?>
-                    <select class="form-select" id="<?=$prop['CODE']?>" name="<?=$prop['CODE']?>">
+                    <select class="form-select"
+                            id="<?=$prop['CODE']?>"
+                            name="<?=$prop['CODE']?>">
                         <?php foreach ($prop['VALUES'] as $id => $value):?>
                             <option
                                 <?php
@@ -155,12 +187,11 @@ $entity = $arResult['ENTITY'];
                     <?php endif; ?>
                 </div>
                 <?php if ($prop['MULTIPLE'] == 'Y'): ?>
-                <div class="my-1">
-                    <a style='cursor: pointer; text-decoration: none; color: black;'
-                       class='add-button' data-code="<?=$prop['CODE']?>">
-                        <img class='mb-3' src='/include/actions_icons/add.png' alt='Add'>
-                    </a>
-                </div>
+                    <div class="my-1">
+                        <a style='cursor: pointer; text-decoration: none; color: black;' class='add-button' data-code="<?=$prop['CODE']?>">
+                            <img class='mb-3' src='/include/actions_icons/add.png' alt='Add'>
+                        </a>
+                    </div>
                 <?php endif;?>
         <?php endif; ?>
         <?php endforeach; ?>

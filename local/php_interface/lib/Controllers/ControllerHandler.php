@@ -25,8 +25,8 @@ class ControllerHandler {
             case 'add':
                 print_r($controller::add());
                 break;
-            case 'update':
-                $controller::update();
+            case 'edit':
+                print_r($controller::update());
                 break;
             case 'getKanbanList':
                 if ($controller != OrdersController::class)
@@ -38,12 +38,12 @@ class ControllerHandler {
                     return false;
                 print_r($controller::getKanbanCard($_POST['ID']));
                 break;
-//            case 'delete':
-//                self::getMasters($json);
-//                break;
-//            case 'getByID':
-//                self::getManagers($json);
-//                break;
+            case 'delete':
+                $controller::delete($_POST['ID']);
+                break;
+            case 'getByID':
+                $controller::getItemByID($_POST['ID']);
+                break;
         }
     }
     private static function getEntity() {

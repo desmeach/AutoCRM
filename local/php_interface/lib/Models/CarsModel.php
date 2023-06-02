@@ -15,6 +15,7 @@ class CarsModel extends Model {
 
     public static function getList($filter): ?array {
         try {
+            setLog($filter);
             if (!$itemsList = parent::getListByIblockID(self::$IBLOCK_ID, $filter))
                 return null;
             $items  = [];
@@ -63,13 +64,26 @@ class CarsModel extends Model {
         $fields = $item->GetFields();
         return array_merge($fields, $props);
     }
-
     public static function add($data) {
         $ID = parent::addItem($data, self::$IBLOCK_ID);
         return $ID ?? ['error' => 'Ошибка при создании элемента'];
     }
-
-    public static function update($props) {
-
+    public static function delete($ID): void {
+        $car = CIBlockElement::GetList(false,
+            ['IBLOCK_ID' => self::$IBLOCK_ID, 'ID' => $ID],
+            false, false, ['PROPERTY_KEY']);
+        $keys = [];
+        $userKey = getKey();
+        while ($props = $car->GetNext()) {
+            $key = $props['PROPERTY_KEY_VALUE'];
+            if ($key !== $userKey)
+                $keys[] = $key;
+        }
+        if (empty($keys))
+            $keys = '';
+        CIBlockElement::SetPropertyValuesEx($ID, self::$IBLOCK_ID, ['KEY' => $keys]);
+    }
+    public static function update(): bool|string {
+        return self::updateElem(self::$IBLOCK_ID);
     }
 }

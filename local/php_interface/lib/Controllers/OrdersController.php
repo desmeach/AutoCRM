@@ -36,4 +36,11 @@ class OrdersController extends Controller {
             return 'Ошибка запроса';
         return OrdersModel::add($_POST);
     }
+    public static function delete($ID): array {
+        return OrdersModel::delete($ID);
+    }
+    public static function update() {
+        header('Content-Type: json/application');
+        return OrdersModel::update();
+    }
 }
