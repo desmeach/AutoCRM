@@ -4,6 +4,9 @@ body {padding: 0; margin:0; font-family: "Roboto Light", sans-serif; min-height:
     min-height: 100vh;
 }
 
+/*.modal { overflow: visible !important; }*/
+/*.modal-body { overflow-y: visible !important; }*/
+
 #loader {
     display:    none;
     position:   fixed;
