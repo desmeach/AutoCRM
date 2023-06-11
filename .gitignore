@@ -55,6 +55,7 @@ AI-BOLIT-*
 
 # core
 bitrix/*
+!/bitrix/modules/s34web.mobile.api/
 !bitrix/license_key.php
 !bitrix/templates/
 !bitrix/components/
