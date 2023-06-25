@@ -9,39 +9,30 @@ namespace lib\Statistics;
 
 use lib\Controllers\ClientsController;
 use lib\Controllers\OrdersController;
-use Bitrix\Main\Data\Cache;
 
 class OrdersStatistic {
-    public static function getStatistic(): ?array {
-        $cache = Cache::createInstance();
-        if ($cache->initCache(86400000, 'clients_statistic_' . getKey())) {
-             return $cache->getVars();
-        }
-        if ($cache->startDataCache()) {
-            $clients = ClientsController::getList();
-            $orders = OrdersController::getList();
-            foreach ($orders as $order) {
-                $clientID = $order['CLIENT']['VALUE']['ID'];
-                $clients[$clientID]['ORDERS_COUNT'] = isset($clients[$clientID]['ORDERS_COUNT']) ?
-                    $clients[$clientID]['ORDERS_COUNT'] + 1 : 1;
-                $totalPrice = $order['TOTAL_PRICE']['VALUE'];
-                if (is_numeric($totalPrice))
-                    $clients[$clientID]['ORDERS_PRICE_SUMMARY'] = isset($clients[$clientID]['ORDERS_PRICE_SUMMARY']) ?
-                        $clients[$clientID]['ORDERS_PRICE_SUMMARY'] + $totalPrice : $totalPrice;
-                foreach ($order['PRODUCTS']['VALUE'] as $product) {
-                    $clients[$clientID]['PRODUCTS_COUNT'][] = $product['NAME'];
-                }
+    public static function getStatistic(): array {
+        $clients = ClientsController::getList();
+        $orders = OrdersController::getList();
+        foreach ($orders as $order) {
+            $clientID = $order['CLIENT']['VALUE']['ID'];
+            $clients[$clientID]['ORDERS_COUNT'] = isset($clients[$clientID]['ORDERS_COUNT']) ?
+                $clients[$clientID]['ORDERS_COUNT'] + 1 : 1;
+            $totalPrice = $order['TOTAL_PRICE']['VALUE'];
+            if (is_numeric($totalPrice))
+                $clients[$clientID]['ORDERS_PRICE_SUMMARY'] = isset($clients[$clientID]['ORDERS_PRICE_SUMMARY']) ?
+                    $clients[$clientID]['ORDERS_PRICE_SUMMARY'] + $totalPrice : $totalPrice;
+            foreach ($order['PRODUCTS']['VALUE'] as $product) {
+                $clients[$clientID]['PRODUCTS_COUNT'][] = $product['NAME'];
             }
-            foreach ($clients as $i => $client) {
-                if (!$client['PRODUCTS_COUNT'])
-                    continue;
-                $clients[$i]['PRODUCTS_COUNT'] = array_count_values($client['PRODUCTS_COUNT']);
-                arsort($clients[$i]['PRODUCTS_COUNT']);
-                $clients[$i]['PRODUCTS_COUNT'] = array_slice($clients[$i]['PRODUCTS_COUNT'], 0, 3);
-            }
-            $cache->endDataCache($clients);
-            return $clients;
         }
-        return null;
+        foreach ($clients as $i => $client) {
+            if (!$client['PRODUCTS_COUNT'])
+                continue;
+            $clients[$i]['PRODUCTS_COUNT'] = array_count_values($client['PRODUCTS_COUNT']);
+            arsort($clients[$i]['PRODUCTS_COUNT']);
+            $clients[$i]['PRODUCTS_COUNT'] = array_slice($clients[$i]['PRODUCTS_COUNT'], 0, 3);
+        }
+        return $clients;
     }
 }

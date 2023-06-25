@@ -9,6 +9,7 @@ namespace lib\Models;
 
 require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
 
+use Bitrix\Main\Type\DateTime;
 use CIBlockElement;
 use CModule;
 use Exception;
@@ -19,6 +20,7 @@ abstract class Model {
     abstract static function getList($filter);
     abstract static function getItemByID($ID): ?array;
     abstract static function add($data);
+    abstract static function delete($ID);
     protected static function getItemByIDFromIBlockID($IBLOCK_ID, $ID): array|\_CIBElement|null {
         try {
             $itemsList = CIBlockElement::GetList(false, [
@@ -81,7 +83,12 @@ abstract class Model {
                     $PROPS[$code][] = $subValue;
                 }
             } else {
-                $PROPS[$code] = $value;
+                if (str_contains($code, 'DATE') && str_contains($value, 'T')) {
+                    $date = new DateTime(str_replace('T', ' ', $value) . ':00', "Y-m-d H:i:s");
+                    $PROPS[$code] = $date->toString();
+                }
+                else
+                    $PROPS[$code] = $value;
             }
         }
         return $PROPS;
@@ -99,5 +106,33 @@ abstract class Model {
             'PROPERTY_VALUES' => $props
         ];
         return $el->Add($arFields);
+    }
+    protected static function deleteElem($ID): array {
+        if(!CIBlockElement::Delete($ID)) {
+            return ['success' => '', 'error' => 'Не удалось удалить элемент!'];
+        }
+        return ['success' => 'Элемент удален', 'error' => ''];
+    }
+    protected static function updateElem($IBLOCK_ID, $props = []) {
+        if (empty($props))
+            $props = $_POST;
+        global $USER;
+        $NAME = $props['NAME'];
+        $ID = $props['ID'];
+        unset($props['IBLOCK_ID'], $props['ID']);
+        $PROPS = self::formatFormRequest($props);
+
+        $el = new CIBlockElement;
+
+        $arFields = [
+            'MODIFIED_BY' => $USER->GetID(),
+            'NAME' => $NAME,
+            'PROPERTY_VALUES' => $PROPS
+        ];
+
+        if ($ID = $el->Update($ID, $arFields, false, false))
+            return json_encode(['success' => $ID]);
+        else
+            return json_encode(['error' => $el->LAST_ERROR]);
     }
 }

@@ -1,9 +1,8 @@
 <?php
-global $USER;
-define('STOP_STATISTICS', true);
 require_once($_SERVER['DOCUMENT_ROOT'].'/bitrix/modules/main/include/prolog_before.php');
-$GLOBALS['APPLICATION']->RestartBuffer();
 CModule::IncludeModule('iblock');
+
+global $USER;
 $id = $_POST['ID'];
 $status = $_POST['STATUS'];
 $statuses = [
@@ -14,55 +13,87 @@ $statuses = [
     7 => 'Рекламация',
     8 => 'Завершена',
 ];
+
 try {
-    $order = CIBlockElement::GetList(false, ['IBLOCK_ID' => 3, 'ID' => $id])->GetNextElement();
-    $orderProps = $order->GetProperties();
-    $elem = new CIBlockElement();
-    CIBlockElement::SetPropertyValuesEx($id, false, array('STATUS' => $status));
-    if ($status == 3 || $status == 4) {
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('MANAGER' => ''));
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('MASTER' => ''));
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('DATE_RECEIVE' => FormatDate("d.m.Y H:i:s")));
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('DATE_ACCEPT' => ''));
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('DATE_START' => ''));
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('DATE_END' => ''));
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('COMMENT_MANAGER' => ''));
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('COMMENT_MASTER' => ''));
+    $manager = $USER->GetID();
+    switch ($status) {
+        case 3:
+            CIBlockElement::SetPropertyValuesEx($id, 3, [
+                'STATUS' => $status,
+                'MANAGER' => '',
+                'MASTER' => '',
+                'DATE_RECEIVE' => FormatDate("d.m.Y H:i:s"),
+                'MILEAGE' => '',
+                'DATE_ACCEPT' => '',
+                'DATE_START' => '',
+                'DATE_END' => '',
+                'COMMENT_MASTER' => '',
+                'COMMENT_MANAGER' => '',
+            ]);
+            break;
+        case 4:
+            CIBlockElement::SetPropertyValuesEx($id, 3, [
+                'STATUS' => $status,
+                'MANAGER' => $manager,
+                'MASTER' => '',
+                'DATE_RECEIVE' => FormatDate("d.m.Y H:i:s"),
+                'MILEAGE' => '',
+                'DATE_ACCEPT' => '',
+                'DATE_START' => '',
+                'DATE_END' => '',
+                'COMMENT_MASTER' => '',
+                'COMMENT_MANAGER' => $_POST['MANAGER_COMMENT'] ?? '',
+            ]);
+            break;
+        case 5:
+            CIBlockElement::SetPropertyValuesEx($id, 3, [
+                'STATUS' => $status,
+                'MANAGER' => $manager,
+                'MASTER' => '',
+                'DATE_ACCEPT' => FormatDate("d.m.Y H:i:s"),
+                'DATE_START' => '',
+                'DATE_END' => '',
+                'MILEAGE' => '',
+                'COMMENT_MASTER' => '',
+                'COMMENT_MANAGER' => ''
+            ]);
+            break;
+        case 6:
+            CIBlockElement::SetPropertyValuesEx($id, 3, [
+                'STATUS' => $status,
+                'MANAGER' => $manager,
+                'MASTER' => $_POST['MASTER'],
+                'DATE_START' => FormatDate("d.m.Y H:i:s"),
+            ]);
+            break;
+        case 8:
+            $orderList = CIBlockElement::GetList(false, ['IBLOCK_ID' => 3, 'ID' => $id],
+                false, false, ['PROPERTY_PRODUCTS', 'PROPERTY_CAR']);
+            $orderProducts = [];
+            $carID = 0;
+            while ($order = $orderList->GetNext()) {
+                $orderProducts[] = $order['PROPERTY_PRODUCTS_VALUE'];
+                $carID = $order['PROPERTY_MILEAGE_VALUE'];
+            }
+            foreach ($_POST['PRODUCTS'] as $product) {
+                if (!in_array($product, $orderProducts)) {
+                    $orderProducts[] = $product;
+                }
+            }
+            if (!empty($_POST['MILEAGE'])) {
+                CIBlockElement::SetPropertyValuesEx($carID, 2, ['MILEAGE' => $_POST['MILEAGE']]);
+            }
 
-    }
-    if ($status == 5) {
-        $manager = $USER->GetID();
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('MANAGER' => $manager));
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('MASTER' => $_POST['MASTER']));
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('DATE_RECEIVE' => FormatDate("d.m.Y H:i:s")));
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('DATE_ACCEPT' => FormatDate("d.m.Y H:i:s")));
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('DATE_START' => ''));
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('DATE_END' => ''));
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('COMMENT_MANAGER' => ''));
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('COMMENT_MASTER' => ''));
-
-    }
-    if ($status == 6) {
-//        if ($_POST['PRODUCTS'])
-//        $products = $_POST['PRODUCTS'];
-        $manager = $USER->GetID();
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('DATE_RECEIVE' => FormatDate("d.m.Y H:i:s")));
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('DATE_ACCEPT' => FormatDate("d.m.Y H:i:s")));
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('DATE_START' => FormatDate("d.m.Y H:i:s")));
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('DATE_END' => ''));
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('COMMENT_MANAGER' => ''));
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('COMMENT_MASTER' => ''));
-
-    }
-    if ($status == 7) {
-        $manager = $USER->GetID();
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('DATE_RECEIVE' => FormatDate("d.m.Y H:i:s")));
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('DATE_ACCEPT' => FormatDate("d.m.Y H:i:s")));
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('DATE_START' => FormatDate("d.m.Y H:i:s")));
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('DATE_END' => FormatDate("d.m.Y H:i:s")));
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('COMMENT_MANAGER' => ''));
-        CIBlockElement::SetPropertyValuesEx($id, 3, array('COMMENT_MASTER' => ''));
-
+            CIBlockElement::SetPropertyValuesEx($id, 3, [
+                'STATUS' => $status,
+                'MANAGER' => $manager,
+                'DATE_END' => FormatDate("d.m.Y H:i:s"),
+                'PRODUCTS' => $orderProducts,
+                'MILEAGE' => $_POST['MILEAGE'],
+                'COMMENT_MASTER' => '',
+                'COMMENT_MANAGER' => $_POST['MASTER_COMMENT']
+            ]);
+            break;
     }
 }
 catch (Exception $ex) {

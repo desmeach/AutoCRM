@@ -4,6 +4,7 @@ ul#vertical-multilevel-menu, #vertical-multilevel-menu ul
 	border-radius: 10px;
 	list-style: none;
 	font-size: 16px;
+	position: -webkit-sticky;
 	position: sticky;
 	top: 20px;
 }
@@ -67,7 +68,7 @@ ul#vertical-multilevel-menu, #vertical-multilevel-menu ul
 /*Rootmenu Items Selected*/
 #vertical-multilevel-menu a.root-item-selected
 {
-	background: linear-gradient(45deg, #2BFFF7, #6DAFFF);
+	background: linear-gradient(#1095c1 0 0);
 	transition: .3s,background-position 0s;
 	color: white;
 	font-size:16px;

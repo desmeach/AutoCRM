@@ -22,9 +22,21 @@ class ClientsController extends Controller {
     public static function getByID($request): ?array {
         return ClientsModel::getItemByID($request);
     }
-    public static function add() {
+    public static function add($params = []) {
+        if (!empty($params))
+            return ClientsModel::add($params);
         if (!isset($_POST))
             return 'Ошибка запроса';
         return ClientsModel::add($_POST);
+    }
+    public static function delete($ID) {
+        ClientsModel::delete($ID);
+    }
+    public static function update() {
+        header('Content-Type: json/application');
+        return ClientsModel::update();
+    }
+    public static function getByPhone($phone) {
+        return ClientsModel::getItemByPhoneNumber($phone);
     }
 }

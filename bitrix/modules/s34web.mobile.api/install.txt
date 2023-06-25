@@ -1,0 +1,51 @@
+Для работы адресации необходимо добавить правила обработки адресов:
+Установить файл /api/index.php
+Содержимое:
+  <?php
+  require_once($_SERVER['DOCUMENT_ROOT'] . "/bitrix/modules/main/include/prolog_before.php");
+  if (\Bitrix\Main\Loader::includeModule('s34web.mobile.api')) {
+    $api = new s34web\Mobile\Api\Init();
+    $api->start();
+  }else{
+    echo "Модуль не установлен";
+  }
+
+  Добавить правило обработки:
+  /* $site_id = "s1";
+  CUrlRewriter::Add(
+      array(
+        "SITE_ID" => $site_id,
+        "CONDITION" => "#^/api/#",
+        "ID" => "s34web.mobile.api",
+        "PATH" => "/api/index.php",
+        "RULE" => ""
+      )
+  );*/
+
+    81 =>
+    array (
+      'CONDITION' => '#^/api/#',
+      'RULE' => '',
+      'ID' => 's34web.mobile.api',
+      'PATH' => '/api/index.php',
+      'SORT' => 100,
+    ),
+
+  CUrlRewriter::Update(
+     array(
+      "SITE_ID" => "s1",
+      "CONDITION" => "#^/api/#"
+     ),
+     array(
+        "CONDITION" => $CONDITION,
+        "PATH" => "/api/index.php",
+        "ID" => "s34web.mobile.api",
+        "RULE" => ""
+     )
+  );
+
+Для работы модулей dadata и swagger:
+  1. Загрузить файл composer.json в корень сайта или расширить /bitrix/vendor/composer-bx.json
+  И выполнить установку модулей.
+
+  2. Установить https://github.com/swagger-api/swagger-ui/releases/ в папку \api\swagger-docs

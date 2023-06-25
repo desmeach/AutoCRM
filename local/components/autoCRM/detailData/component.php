@@ -5,6 +5,8 @@
  * Company: 34web Studio
  */
 
+use autocrm_tables\lib\controllers\CarservicesController;
+
 if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) die();
 CModule::IncludeModule('iblock');
 
@@ -28,6 +30,7 @@ switch ($arResult['IBLOCK_ID']) {
         break;
     case 5:
         $arResult['ELEMENT'] = \lib\Controllers\BranchesController::getByID($ID);
+//        $arResult['ELEMENT'] = CarservicesController::getById($ID);
         break;
     case 7:
         $arResult['ELEMENT'] = \lib\Controllers\MastersController::getByID($ID);

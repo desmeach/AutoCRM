@@ -6,6 +6,8 @@
  */
 
 Bitrix\Main\Loader::registerAutoLoadClasses(null, [
+    'lib\Statistics\ClientsStatistic' => '/local/php_interface/lib/Statistics/ClientsStatistic.php',
+    'lib\Statistics\ProductsStatistic' => '/local/php_interface/lib/Statistics/ProductsStatistic.php',
     'lib\Statistics\OrdersStatistic' => '/local/php_interface/lib/Statistics/OrdersStatistic.php',
     'lib\ReportsGenerator' => '/local/php_interface/lib/ReportsGenerator.php',
 
@@ -27,4 +29,15 @@ Bitrix\Main\Loader::registerAutoLoadClasses(null, [
     'lib\Controllers\ProductsController' => '/local/php_interface/lib/Controllers/ProductsController.php',
     'lib\Controllers\BranchesController' => '/local/php_interface/lib/Controllers/BranchesController.php',
     'lib\Controllers\ManagersController' => '/local/php_interface/lib/Controllers/ManagersController.php',
+
+    'autocrm_tables\lib\ClientsTable' => '/local/modules/autocrm_tables/lib/ClientsTable.php',
+    'autocrm_tables\lib\CarsTable' => '/local/modules/autocrm_tables/lib/CarsTable.php',
+    'autocrm_tables\lib\CarservicesTable' => '/local/modules/autocrm_tables/lib/CarservicesTable.php',
+    'autocrm_tables\lib\CarservicesPhonesTable' => '/local/modules/autocrm_tables/lib/CarservicesPhonesTable.php',
+
+    'autocrm_tables\lib\controllers\Controller' => '/local/modules/autocrm_tables/lib/controllers/Controller.php',
+    'autocrm_tables\lib\controllers\ClientsController' => '/local/modules/autocrm_tables/lib/controllers/ClientsController.php',
+    'autocrm_tables\lib\controllers\CarservicesController' => '/local/modules/autocrm_tables/lib/controllers/CarservicesController.php',
+
+    'autocrm_tables\lib\controllers\ControllersHandler' => '/local/modules/autocrm_tables/lib/controllers/ControllersHandler.php',
 ]);

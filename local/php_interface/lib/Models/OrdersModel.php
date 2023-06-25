@@ -38,14 +38,6 @@ class OrdersModel extends Model {
     }
     public static function getListForDataTable($filter): bool|string|null {
         try {
-            $statusCodes = [
-                'Новая' => 1,
-                'Отклонена' => 2,
-                'Запланирована' => 3,
-                'В работе' => 4,
-                'Рекламация' => 5,
-                'Завершена' => 6,
-            ];
             $shortStatuses = [
                 'Новая' => 'Новая',
                 'Отклонена' => 'Откл.',
@@ -75,8 +67,7 @@ class OrdersModel extends Model {
                         $order['CLIENT']['VALUE']['NAME'], 'clients'),
                     'car' => self::getItemDetailLink($order['CAR']['VALUE']['ID'],
                         $order['CAR']['VALUE']['NAME'], 'cars'),
-                    'status' => $statusCodes[$order['STATUS']['VALUE']] . '. '
-                        . $shortStatuses[$order['STATUS']['VALUE']],
+                    'status' => $shortStatuses[$order['STATUS']['VALUE']],
                     'products' => self::formatArrayToNumericListStr($order['PRODUCTS']['VALUE'], 'products'),
                     'total_price' => $order['TOTAL_PRICE']['VALUE'],
                     'date_receive' => $order['DATE_RECEIVE']['VALUE'],
@@ -108,6 +99,8 @@ class OrdersModel extends Model {
                     'car' => $order['CAR']['VALUE'],
                     'products' => $order['PRODUCTS']['VALUE'],
                     'status' => $order['STATUS']['VALUE'],
+                    'manager' => $order['MANAGER']['VALUE'],
+                    'master' => $order['MASTER']['VALUE'],
                     'total_price' => $order['TOTAL_PRICE']['VALUE'],
                     'date_receive' => $order['DATE_RECEIVE']['VALUE'],
                     'date_accept' => $order['DATE_ACCEPT']['VALUE'],
@@ -130,6 +123,8 @@ class OrdersModel extends Model {
                 'car' => $order['CAR']['VALUE'],
                 'products' => $order['PRODUCTS']['VALUE'],
                 'status' => $order['STATUS']['VALUE'],
+                'manager' => $order['MANAGER']['VALUE'],
+                'master' => $order['MASTER']['VALUE'],
                 'total_price' => $order['TOTAL_PRICE']['VALUE'],
                 'date_receive' => $order['DATE_RECEIVE']['VALUE'],
                 'date_accept' => $order['DATE_ACCEPT']['VALUE'],
@@ -158,7 +153,10 @@ class OrdersModel extends Model {
         $NAME = 'Заказ клиента ID' . $data['CLIENT'];
         unset($_POST['IBLOCK_ID'], $data['NAME']);
         $PROPS = parent::formatFormRequest($data);
-        $PROPS['DATE_RECEIVE'] = date('d.m.Y H:i:s');
+        if (isset($data['DATE_RECEIVE']))
+            $PROPS['DATE_RECEIVE'] = $data['DATE_RECEIVE'];
+        else
+            $PROPS['DATE_RECEIVE'] = date('d.m.Y H:i:s');
         $PROPS['STATUS'] = 3;
         $totalSum = 0;
         if (!is_array($data['PRODUCTS']))
@@ -167,7 +165,7 @@ class OrdersModel extends Model {
             $product = ProductsModel::getItemByID($id);
             $totalSum += $product['PRICE']['VALUE'];
         }
-        $data['TOTAL_PRICE'] = $totalSum;
+        $PROPS['TOTAL_PRICE'] = $totalSum;
         $el = new CIBlockElement;
         $arFields = [
             'MODIFIED_BY' => $USER->GetID(),
@@ -178,7 +176,10 @@ class OrdersModel extends Model {
         $ID = $el->Add($arFields);
         return $ID ?? ['error' => 'Ошибка при создании элемента'];
     }
-    public static function update($props) {
-
+    public static function update(): bool|string {
+        return self::updateElem(self::$IBLOCK_ID);
+    }
+    public static function delete($ID): array {
+        return self::deleteElem($ID);
     }
 }

@@ -35,7 +35,7 @@ if (count($arResult["ERRORS"]) > 0):
 		if (intval($key) == 0 && $key !== 0) 
 			$arResult["ERRORS"][$key] = str_replace("#FIELD_NAME#", "&quot;".GetMessage("REGISTER_FIELD_".$key)."&quot;", $error);
 
-	ShowError(implode("<br />", $arResult["ERRORS"]));
+   ShowError(implode("<br />", $arResult["ERRORS"]));
 
 elseif($arResult["USE_EMAIL_CONFIRMATION"] === "Y"):
 ?>
@@ -194,22 +194,12 @@ endif;
                 ?><textarea cols="30" rows="5" name="REGISTER[<?=$FIELD?>]"><?=$arResult["VALUES"][$FIELD]?></textarea><?
                 break;
             default:
-                if ($FIELD == "PERSONAL_BIRTHDAY"):?><small><?=$arResult["DATE_FORMAT"]?></small><br /><?endif;
-                ?><input class="form-control" size="30" type="text" name="REGISTER[<?=$FIELD?>]" value="<?=$arResult["VALUES"][$FIELD]?>" /><?
-                    if ($FIELD == "PERSONAL_BIRTHDAY")
-                        $APPLICATION->IncludeComponent(
-                            'bitrix:main.calendar',
-                            '',
-                            array(
-                                'SHOW_INPUT' => 'N',
-                                'FORM_NAME' => 'regform',
-                                'INPUT_NAME' => 'REGISTER[PERSONAL_BIRTHDAY]',
-                                'SHOW_TIME' => 'N'
-                            ),
-                            null,
-                            array("HIDE_ICONS"=>"Y")
-                        );
-                    ?><?
+                if ($FIELD == "PERSONAL_BIRTHDAY"):?>
+                <input class="form-control" size="30" type="date" name="REGISTER[<?=$FIELD?>]" value="<?=$arResult["VALUES"][$FIELD]?>" />
+                <?php else: ?>
+                <input class="form-control" size="30" type="text" name="REGISTER[<?=$FIELD?>]" value="<?=$arResult["VALUES"][$FIELD]?>" />
+                <?php endif; ?>
+        <?php
         }?></td>
             </tr>
         <?endif?>
@@ -255,7 +245,7 @@ endif;
         <tfoot>
             <tr>
                 <td></td>
-                <td><input type="submit" name="register_submit_button" value="<?=GetMessage("AUTH_REGISTER")?>" /></td>
+                <td><input type="submit" class="btn btn-primary mt-2" name="register_submit_button" value="<?=GetMessage("AUTH_REGISTER")?>" /></td>
             </tr>
         </tfoot>
     </table>

@@ -1,0 +1,8 @@
+{
+    "require": {
+        "hflabs/dadata": "^20.12",
+        "ext-curl": "*",
+        "zircote/swagger-php": "3.3.7",
+        "doctrine/annotations": "^1.13"
+    }
+}

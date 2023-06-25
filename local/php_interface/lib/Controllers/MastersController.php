@@ -8,6 +8,7 @@
 namespace lib\Controllers;
 
 use lib\Models\MastersModel;
+use lib\Models\ProductsModel;
 
 class MastersController extends Controller {
     public static function getList(): array {
@@ -26,5 +27,12 @@ class MastersController extends Controller {
         if (!isset($_POST))
             return 'Ошибка запроса';
         return MastersModel::add($_POST);
+    }
+    public static function delete($ID): array {
+        return MastersModel::delete($ID);
+    }
+    public static function update() {
+        header('Content-Type: json/application');
+        return MastersModel::update();
     }
 }
